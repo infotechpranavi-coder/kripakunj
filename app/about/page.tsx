@@ -52,12 +52,12 @@ export default function About() {
                   <h2 className="text-3xl md:text-4xl font-bold text-foreground">Our Vision</h2>
                 </div>
                 <p className="text-foreground/70 leading-relaxed mb-4 text-lg">
-                  Our foresight of 50 years ahead is a country free of NGOs. We envision a society where every individual, regardless of their background, has access to quality education, healthcare, and opportunities for personal and professional growth.
-                </p>
+                Our foresight of 50 years ahead is a country free of NGOs. We envision a society where every individual, regardless of their background, has access to quality education, healthcare, and opportunities for personal and professional growth.
+              </p>
                 <p className="text-foreground/70 leading-relaxed text-lg">
-                  We believe in breaking the vicious cycle of poverty and social isolation by restoring hope and enabling people to become active, contributing members of society.
-                </p>
-              </div>
+                We believe in breaking the vicious cycle of poverty and social isolation by restoring hope and enabling people to become active, contributing members of society.
+              </p>
+            </div>
             </AnimatedSection>
             <AnimatedSection direction="left" delay={200}>
               <div className="group bg-white rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 h-full">
@@ -68,8 +68,8 @@ export default function About() {
                   <h2 className="text-3xl md:text-4xl font-bold text-foreground">Our Mission</h2>
                 </div>
                 <p className="text-foreground/70 leading-relaxed mb-6 text-lg">
-                  We are committed to exterminating the miserable conditions prevalent in our nation so that people can live with dignity. Our mission encompasses:
-                </p>
+                We are committed to exterminating the miserable conditions prevalent in our nation so that people can live with dignity. Our mission encompasses:
+              </p>
                 <ul className="space-y-4">
                   {[
                     'Quality Education for underprivileged children',
@@ -82,10 +82,10 @@ export default function About() {
                         ✓
                       </span>
                       <span className="text-foreground/80 font-medium text-lg leading-relaxed">{item}</span>
-                    </li>
+                </li>
                   ))}
-                </ul>
-              </div>
+              </ul>
+            </div>
             </AnimatedSection>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function About() {
           <AnimatedSection direction="fade" className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-foreground">
               Our <span className="text-primary font-bold">Programs</span>
-            </h2>
+          </h2>
           </AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
@@ -168,12 +168,12 @@ export default function About() {
                     {program.icon}
                   </div>
                   <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {program.name}
-                  </h3>
+                      {program.name}
+                    </h3>
                   <p className="text-primary font-semibold text-sm mb-3">{program.tagline}</p>
                   <p className="text-foreground/70 text-sm leading-relaxed mb-4 grow">
-                    {program.description}
-                  </p>
+                      {program.description}
+                    </p>
                   <div className="bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/50 mt-auto">
                     <p className="text-primary font-bold text-xs">{program.stats}</p>
                   </div>
@@ -196,8 +196,8 @@ export default function About() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <AnimatedSection direction="fade" className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold text-white">
-              Our Core <span className="text-primary">Values</span>
-            </h2>
+            Our Core <span className="text-primary">Values</span>
+          </h2>
           </AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -243,8 +243,8 @@ export default function About() {
                     {value.title}
                   </h3>
                   <p className="text-foreground/70 text-sm mb-4 leading-relaxed">{value.desc}</p>
-                  <p className="text-foreground/60 text-xs leading-relaxed italic">{value.long}</p>
-                </div>
+                <p className="text-foreground/60 text-xs leading-relaxed italic">{value.long}</p>
+              </div>
               </AnimatedSection>
             ))}
           </div>
@@ -256,8 +256,8 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection direction="fade" className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground">
-              Our <span className="text-primary">Track Record</span>
-            </h2>
+            Our <span className="text-primary">Track Record</span>
+          </h2>
           </AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -279,8 +279,8 @@ export default function About() {
                   <h4 className="text-lg md:text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                     {achievement.label}
                   </h4>
-                  <p className="text-sm text-foreground/70">{achievement.desc}</p>
-                </div>
+                <p className="text-sm text-foreground/70">{achievement.desc}</p>
+              </div>
               </AnimatedSection>
             ))}
           </div>
@@ -292,8 +292,8 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection direction="fade" className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground">
-              <span className="text-primary">Governance</span> & Transparency
-            </h2>
+            <span className="text-primary">Governance</span> & Transparency
+          </h2>
           </AnimatedSection>
           <div className="grid md:grid-cols-2 gap-8">
             <AnimatedSection direction="right" delay={100}>
@@ -304,26 +304,26 @@ export default function About() {
                   </div>
                   <h3 className="text-2xl md:text-3xl font-bold text-foreground">Our Commitment</h3>
                 </div>
-                <ul className="space-y-4">
-                  {[
-                    'Transparent financial reporting and annual audits',
-                    'Regular impact assessment and monitoring',
-                    'Community feedback and suggestions welcomed',
-                    'Ethical practices in all operations',
-                    '80%+ funds allocated to programs (not overhead)',
-                    'Professional team with years of experience',
-                    'Registered as 80G and 12A certified NGO',
-                    'NITI Aayog recognition for social impact',
-                  ].map((item, idx) => (
+              <ul className="space-y-4">
+                {[
+                  'Transparent financial reporting and annual audits',
+                  'Regular impact assessment and monitoring',
+                  'Community feedback and suggestions welcomed',
+                  'Ethical practices in all operations',
+                  '80%+ funds allocated to programs (not overhead)',
+                  'Professional team with years of experience',
+                  'Registered as 80G and 12A certified NGO',
+                  'NITI Aayog recognition for social impact',
+                ].map((item, idx) => (
                     <li key={idx} className="flex items-start gap-3 group/item">
                       <span className="w-6 h-6 bg-linear-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-sm mt-0.5 shrink-0 group-hover/item:scale-110 transition-transform">
                         ✓
                       </span>
                       <span className="text-foreground/80 font-medium text-lg leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
             </AnimatedSection>
             <AnimatedSection direction="left" delay={200}>
               <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 h-full">
@@ -333,42 +333,42 @@ export default function About() {
                   </div>
                   <h3 className="text-2xl md:text-3xl font-bold text-foreground">How We Work</h3>
                 </div>
-                <div className="space-y-4">
-                  {[
-                    {
-                      title: 'Needs Assessment',
-                      desc: 'Thorough ground research to understand community needs and challenges.',
-                    },
-                    {
-                      title: 'Program Design',
-                      desc: 'Collaborative design of sustainable, scalable, and impactful programs.',
-                    },
-                    {
-                      title: 'Implementation',
-                      desc: 'On-ground execution with regular monitoring and community participation.',
-                    },
-                    {
-                      title: 'Impact Measurement',
-                      desc: 'Regular evaluation of outcomes and adaptation for continuous improvement.',
-                    },
-                    {
-                      title: 'Scaling & Sustainability',
-                      desc: 'Building models for long-term sustainability and wider reach.',
-                    },
-                    {
-                      title: 'Community Ownership',
-                      desc: 'Ensuring communities drive their own development journey.',
-                    },
-                  ].map((process, idx) => (
+              <div className="space-y-4">
+                {[
+                  {
+                    title: 'Needs Assessment',
+                    desc: 'Thorough ground research to understand community needs and challenges.',
+                  },
+                  {
+                    title: 'Program Design',
+                    desc: 'Collaborative design of sustainable, scalable, and impactful programs.',
+                  },
+                  {
+                    title: 'Implementation',
+                    desc: 'On-ground execution with regular monitoring and community participation.',
+                  },
+                  {
+                    title: 'Impact Measurement',
+                    desc: 'Regular evaluation of outcomes and adaptation for continuous improvement.',
+                  },
+                  {
+                    title: 'Scaling & Sustainability',
+                    desc: 'Building models for long-term sustainability and wider reach.',
+                  },
+                  {
+                    title: 'Community Ownership',
+                    desc: 'Ensuring communities drive their own development journey.',
+                  },
+                ].map((process, idx) => (
                     <div key={idx} className="group bg-linear-to-r from-primary/5 via-accent/5 to-primary/5 rounded-xl p-5 border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:shadow-md">
                       <h4 className="font-bold text-foreground mb-2 group-hover:text-primary transition-colors text-lg">
                         {process.title}
                       </h4>
                       <p className="text-sm text-foreground/70 leading-relaxed">{process.desc}</p>
-                    </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
+            </div>
             </AnimatedSection>
           </div>
         </div>
@@ -379,13 +379,13 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection direction="fade" className="text-center mb-6">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-              Our <span className="text-primary">Leadership Team</span>
-            </h2>
+            Our <span className="text-primary">Leadership Team</span>
+          </h2>
           </AnimatedSection>
           <AnimatedSection direction="fade" delay={100} className="text-center mb-12">
             <p className="text-center text-foreground/70 max-w-2xl mx-auto text-lg">
-              Led by passionate changemakers with decades of collective experience in social development, our team is committed to creating meaningful and sustainable impact.
-            </p>
+            Led by passionate changemakers with decades of collective experience in social development, our team is committed to creating meaningful and sustainable impact.
+          </p>
           </AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
@@ -432,7 +432,7 @@ export default function About() {
                     {member.exp}
                   </p>
                   <p className="text-sm text-foreground/70 leading-relaxed grow">{member.focus}</p>
-                </div>
+              </div>
               </AnimatedSection>
             ))}
           </div>

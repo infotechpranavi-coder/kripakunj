@@ -16,8 +16,8 @@ export function Navigation() {
             <Image
               src="/logo.jpg"
               alt="Kripa Kunj Charitable Trust"
-              width={50}
-              height={50}
+              width={70}
+              height={70}
               className="rounded-full"
             />
             <div className="hidden sm:block">
