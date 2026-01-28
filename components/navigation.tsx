@@ -4,8 +4,28 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { ChevronDown } from 'lucide-react'
+
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isAboutOpen, setIsAboutOpen] = useState(false)
+
+  const aboutOptions = [
+    { name: 'About Us', href: '/about' },
+    { name: 'Media Coverage', href: '/about/media' },
+    { name: 'Team Members', href: '/about/team' },
+    { name: 'Board Member', href: '/about/board' },
+    { name: 'Gallery', href: '/about/gallery' },
+    { name: 'Videos', href: '/about/videos' },
+    { name: 'Press Release', href: '/about/press' },
+    { name: 'Compliance', href: '/about/compliance' },
+  ]
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-sm">
@@ -21,7 +41,7 @@ export function Navigation() {
               className="rounded-full"
             />
             <div className="hidden sm:block">
-              <div className="font-bold text-primary text-lg">Kripa Kunj</div>
+              <div className="font-bold text-primary text-lg">Kripa Kunj Charitable Trust</div>
               <div className="text-xs text-accent">Serving Beyond Humanity</div>
             </div>
           </Link>
@@ -34,11 +54,27 @@ export function Navigation() {
             >
               Home
             </Link>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary font-medium transition cursor-pointer outline-none">
+                About <ChevronDown className="w-4 h-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                {aboutOptions.map((option) => (
+                  <DropdownMenuItem key={option.name} asChild>
+                    <Link href={option.href} className="w-full cursor-pointer">
+                      {option.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Link
-              href="/about"
+              href="/campaigns"
               className="text-foreground hover:text-primary font-medium transition"
             >
-              About Us
+              Campaigns
             </Link>
             <Link
               href="/events"
@@ -94,36 +130,66 @@ export function Navigation() {
           <div className="md:hidden pb-4 flex flex-col gap-3">
             <Link
               href="/"
+              onClick={() => setIsOpen(false)}
               className="block px-4 py-2 text-foreground hover:text-primary font-medium hover:bg-muted rounded"
             >
               Home
             </Link>
+            
+            <div className="flex flex-col">
+              <button
+                onClick={() => setIsAboutOpen(!isAboutOpen)}
+                className="flex items-center justify-between w-full px-4 py-2 text-foreground hover:text-primary font-medium hover:bg-muted rounded"
+              >
+                About <ChevronDown className={`w-4 h-4 transition-transform ${isAboutOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {isAboutOpen && (
+                <div className="pl-6 flex flex-col gap-2 mt-1">
+                  {aboutOptions.map((option) => (
+                    <Link
+                      key={option.name}
+                      href={option.href}
+                      onClick={() => setIsOpen(false)}
+                      className="block px-4 py-2 text-foreground/80 hover:text-primary text-sm font-medium hover:bg-muted rounded"
+                    >
+                      {option.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <Link
-              href="/about"
+              href="/campaigns"
+              onClick={() => setIsOpen(false)}
               className="block px-4 py-2 text-foreground hover:text-primary font-medium hover:bg-muted rounded"
             >
-              About Us
+              Campaigns
             </Link>
             <Link
               href="/events"
+              onClick={() => setIsOpen(false)}
               className="block px-4 py-2 text-foreground hover:text-primary font-medium hover:bg-muted rounded"
             >
               Events
             </Link>
             <Link
               href="/volunteer"
+              onClick={() => setIsOpen(false)}
               className="block px-4 py-2 text-foreground hover:text-primary font-medium hover:bg-muted rounded"
             >
               Volunteer
             </Link>
             <Link
               href="/contact"
+              onClick={() => setIsOpen(false)}
               className="block px-4 py-2 text-foreground hover:text-primary font-medium hover:bg-muted rounded"
             >
               Contact
             </Link>
             <Link
               href="/contact"
+              onClick={() => setIsOpen(false)}
               className="block px-4 py-2 bg-primary text-primary-foreground rounded font-medium hover:opacity-90 text-center"
             >
               Donate

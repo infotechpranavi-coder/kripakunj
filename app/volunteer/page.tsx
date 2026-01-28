@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { ImageSlider } from '@/components/image-slider'
+import { VolunteerApplication } from '@/components/volunteer-application'
 import Link from 'next/link'
 
 export default function Volunteer() {
@@ -344,6 +345,7 @@ export default function Volunteer() {
         </div>
       </section>
 
+      <VolunteerApplication />
       <Footer />
     </>
   )

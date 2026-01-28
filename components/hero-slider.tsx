@@ -96,13 +96,13 @@ export function HeroSlider({
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Link
                       href="/volunteer"
-                      className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition text-center inline-block"
+                      className="px-8 py-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white rounded-lg font-semibold hover:bg-white/20 transition text-center inline-block"
                     >
                       Become a Volunteer
                     </Link>
                     <Link
                       href="/contact"
-                      className="px-8 py-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white rounded-lg font-semibold hover:bg-white/20 transition text-center inline-block"
+                      className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition text-center inline-block"
                     >
                       Donate Now
                     </Link>

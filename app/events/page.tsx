@@ -38,6 +38,7 @@ export default function Events() {
       category: 'Health',
       time: '10:00 AM - 2:00 PM',
       interested: '250+',
+      image: '/slider-community.jpg',
     },
     {
       id: 2,
@@ -49,6 +50,7 @@ export default function Events() {
       category: 'Education',
       time: '9:00 AM - 12:00 PM',
       interested: '300+',
+      image: '/slider-education.jpg',
     },
     {
       id: 3,
@@ -60,6 +62,7 @@ export default function Events() {
       category: 'Environment',
       time: '6:00 AM - 10:00 AM',
       interested: '150+',
+      image: '/slider-environment.jpg',
     },
     {
       id: 4,
@@ -71,6 +74,7 @@ export default function Events() {
       category: 'Health',
       time: '9:00 AM - 5:00 PM',
       interested: '400+',
+      image: '/slider-community.jpg',
     },
     {
       id: 5,
@@ -82,6 +86,7 @@ export default function Events() {
       category: 'Empowerment',
       time: '10:00 AM - 4:00 PM',
       interested: '100+',
+      image: '/slider-education.jpg',
     },
     {
       id: 6,
@@ -93,6 +98,7 @@ export default function Events() {
       category: 'Environment',
       time: '2:00 PM - 5:00 PM',
       interested: '180+',
+      image: '/slider-environment.jpg',
     },
     {
       id: 7,
@@ -104,6 +110,7 @@ export default function Events() {
       category: 'Food Security',
       time: '8:00 AM - 12:00 PM',
       interested: '200+',
+      image: '/slider-community.jpg',
     },
     {
       id: 8,
@@ -115,6 +122,7 @@ export default function Events() {
       category: 'Environment',
       time: '6:00 AM - 10:00 AM',
       interested: '350+',
+      image: '/slider-environment.jpg',
     },
     {
       id: 9,
@@ -126,6 +134,7 @@ export default function Events() {
       category: 'Health',
       time: '9:00 AM - 4:00 PM',
       interested: '320+',
+      image: '/slider-education.jpg',
     },
     {
       id: 10,
@@ -137,6 +146,7 @@ export default function Events() {
       category: 'Training',
       time: '10:00 AM - 5:00 PM',
       interested: '80+',
+      image: '/slider-community.jpg',
     },
   ]
 
@@ -147,6 +157,7 @@ export default function Events() {
       raised: '₹15 Lakhs',
       participants: '500+',
       impact: 'Funded 3 new classrooms',
+      image: '/slider-community.jpg',
     },
     {
       title: 'Children\'s Day Celebration',
@@ -154,6 +165,7 @@ export default function Events() {
       raised: 'Gifts & Education Supplies',
       participants: '300+',
       impact: 'Distributed to 500+ children',
+      image: '/slider-education.jpg',
     },
     {
       title: 'Tree Plantation Campaign',
@@ -161,6 +173,7 @@ export default function Events() {
       raised: '5,000 Trees Planted',
       participants: '200+',
       impact: 'Carbon offset equivalent to 5 homes',
+      image: '/slider-environment.jpg',
     },
     {
       title: 'Health Checkup Camp',
@@ -168,6 +181,7 @@ export default function Events() {
       raised: 'Free Medical Checkups',
       participants: '400+',
       impact: 'Identified & treated 50+ cases',
+      image: '/slider-community.jpg',
     },
     {
       title: 'Beach Cleaning Drive - Summer 2024',
@@ -175,6 +189,7 @@ export default function Events() {
       raised: '2 Tons Waste Collected',
       participants: '150+',
       impact: 'Marine life protection',
+      image: '/slider-environment.jpg',
     },
     {
       title: 'Women Empowerment Bazaar',
@@ -182,6 +197,7 @@ export default function Events() {
       raised: '₹5 Lakhs Sales',
       participants: '80+ Women',
       impact: 'Generated monthly income',
+      image: '/slider-education.jpg',
     },
     {
       title: 'Blood Donation Marathon',
@@ -189,6 +205,7 @@ export default function Events() {
       raised: '300 Units Collected',
       participants: '450+',
       impact: 'Saved ~900 lives',
+      image: '/slider-community.jpg',
     },
     {
       title: 'School Supply Drive',
@@ -196,6 +213,7 @@ export default function Events() {
       raised: 'Books & Stationery',
       participants: '250+',
       impact: 'Enabled 400+ children to attend school',
+      image: '/slider-education.jpg',
     },
   ]
 
@@ -214,43 +232,69 @@ export default function Events() {
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-foreground">
             Upcoming <span className="text-primary">Events</span>
           </h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {upcomingEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-muted rounded-lg p-8 hover:shadow-lg transition border-l-4 border-primary overflow-hidden"
+                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold text-foreground flex-1">{event.title}</h3>
-                  <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold whitespace-nowrap ml-2">
-                    {event.category}
-                  </span>
-                </div>
-                <div className="space-y-3 mb-6 text-foreground/70">
-                  <div className="flex items-center gap-2">
-                    <span className="text-primary font-semibold">📅</span>
-                    <span className="text-sm">{event.date}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-primary font-semibold">🕐</span>
-                    <span className="text-sm">{event.time}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-primary font-semibold">📍</span>
-                    <span className="text-sm">{event.location}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-accent font-semibold">👥</span>
-                    <span className="text-sm">{event.interested} Interested</span>
+                <div className="relative h-48 overflow-hidden">
+                  <img 
+                    src={event.image} 
+                    alt={event.title} 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
+                  <div className="absolute top-4 right-4">
+                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary rounded-full text-xs font-semibold whitespace-nowrap">
+                      {event.category}
+                    </span>
                   </div>
                 </div>
-                <p className="text-foreground/70 mb-6 text-sm leading-relaxed">{event.description}</p>
-                <Link
-                  href="/contact"
-                  className="inline-block px-6 py-2 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition text-sm"
-                >
-                  Register Now
-                </Link>
+                <div className="p-6 flex-grow">
+                  <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-4">{event.title}</h3>
+                  <div className="space-y-3 mb-4 text-foreground/70">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-primary text-sm">📅</span>
+                      </div>
+                      <span className="text-sm">{event.date}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-primary text-sm">🕐</span>
+                      </div>
+                      <span className="text-sm">{event.time}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-primary text-sm">📍</span>
+                      </div>
+                      <span className="text-sm">{event.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-accent text-sm">👥</span>
+                      </div>
+                      <span className="text-sm">{event.interested} Interested</span>
+                    </div>
+                  </div>
+                  <p className="text-foreground/70 mb-6 text-sm leading-relaxed line-clamp-3">{event.description}</p>
+                  <div className="flex gap-3 mt-auto">
+                    <Link
+                      href="/contact"
+                      className="flex-1 text-center px-4 py-3 bg-gradient-to-r from-primary to-secondary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition"
+                    >
+                      Register Now
+                    </Link>
+                    <Link
+                      href={`/events/${event.id}`}
+                      className="px-4 py-3 border border-primary text-primary rounded-lg font-semibold hover:bg-primary/10 transition"
+                    >
+                      Details
+                    </Link>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -263,27 +307,45 @@ export default function Events() {
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-foreground">
             Past <span className="text-primary">Events & Impact</span>
           </h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {pastEvents.map((event, index) => (
-              <div key={index} className="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition">
-                <h3 className="text-xl font-bold text-foreground mb-4">{event.title}</h3>
-                <div className="space-y-3 text-foreground/70">
-                  <div className="flex items-center gap-2">
-                    <span className="text-accent font-semibold">📅</span>
-                    <span className="text-sm">{event.date}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-accent font-semibold">👥</span>
-                    <span className="text-sm">{event.participants} Participants</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-accent font-semibold">🎯</span>
-                    <span className="text-sm">{event.raised}</span>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <div className="flex items-start gap-2">
-                      <span className="text-primary font-semibold">✨</span>
-                      <span className="text-sm font-medium text-primary">{event.impact}</span>
+              <div key={index} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col">
+                <div className="relative h-48 overflow-hidden">
+                  <img 
+                    src={event.image} 
+                    alt={event.title} 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
+                </div>
+                <div className="p-6 flex-grow">
+                  <h3 className="text-xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors">{event.title}</h3>
+                  <div className="space-y-3 text-foreground/70">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-primary text-sm">📅</span>
+                      </div>
+                      <span className="text-sm">{event.date}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-primary text-sm">👥</span>
+                      </div>
+                      <span className="text-sm">{event.participants} Participants</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-accent text-sm">🎯</span>
+                      </div>
+                      <span className="text-sm">{event.raised}</span>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <div className="flex items-start gap-2">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-primary text-sm">✨</span>
+                        </div>
+                        <span className="text-sm font-medium text-primary">{event.impact}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
