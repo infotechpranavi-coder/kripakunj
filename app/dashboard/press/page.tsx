@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     Menu,
     Eye,
@@ -13,13 +13,42 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import AdminSidebar from '@/components/admin-sidebar'
+import AddPressReleaseModal from './AddPressReleaseModal'
+
+interface PressRelease {
+    _id: string
+    title: string
+    imageUrl: string
+    date: string
+}
 
 export default function PressReleasePage() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [darkMode, setDarkMode] = useState(false)
+    const [releases, setReleases] = useState<PressRelease[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
     const toggleDarkMode = () => setDarkMode(!darkMode)
+
+    const fetchReleases = async () => {
+        setIsLoading(true)
+        try {
+            const res = await fetch('/api/press')
+            const data = await res.json()
+            if (data.success) {
+                setReleases(data.data)
+            }
+        } catch (error) {
+            console.error('Error loading press releases', error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchReleases()
+    }, [])
 
     return (
         <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
@@ -59,25 +88,54 @@ export default function PressReleasePage() {
                             <Megaphone className="mr-3 h-6 w-6 text-primary" />
                             Press Release
                         </h1>
-                        <Button>
-                            <Plus className="h-4 w-4 mr-2" />
-                            Add Release
-                        </Button>
+                        <AddPressReleaseModal onSuccess={fetchReleases} />
                     </div>
 
-                    <Card>
-                        <CardContent className="p-12 flex flex-col items-center justify-center text-center">
-                            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-full mb-4">
-                                <Megaphone className="h-8 w-8 text-gray-400" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No press releases yet</h3>
-                            <p className="text-gray-500 max-w-sm mb-6">Publish and manage your official press releases here.</p>
-                            <Button>
-                                <Plus className="h-4 w-4 mr-2" />
-                                Add Release
-                            </Button>
-                        </CardContent>
-                    </Card>
+                    {isLoading ? (
+                        <Card>
+                            <CardContent className="p-12 flex flex-col items-center justify-center text-center">
+                                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4" />
+                                <p className="text-gray-500">Loading press releases...</p>
+                            </CardContent>
+                        </Card>
+                    ) : releases.length === 0 ? (
+                        <Card>
+                            <CardContent className="p-12 flex flex-col items-center justify-center text-center">
+                                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-full mb-4">
+                                    <Megaphone className="h-8 w-8 text-gray-400" />
+                                </div>
+                                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                                    No press releases yet
+                                </h3>
+                                <p className="text-gray-500 max-w-sm mb-6">
+                                    Publish and manage your official press releases here.
+                                </p>
+                                <AddPressReleaseModal onSuccess={fetchReleases} />
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {releases.map((item) => (
+                                <Card key={item._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                                    <div className="h-48 w-full bg-gray-100 overflow-hidden">
+                                        <img
+                                            src={item.imageUrl}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <CardContent className="p-4">
+                                        <h3 className="font-semibold text-sm line-clamp-2 mb-1">
+                                            {item.title}
+                                        </h3>
+                                        <p className="text-xs text-gray-500">
+                                            {new Date(item.date || item.createdAt || item.updatedAt).toLocaleDateString?.() ?? ''}
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

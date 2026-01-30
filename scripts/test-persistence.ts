@@ -1,5 +1,5 @@
-import dbConnect from './lib/db';
-import BoardMember from './models/BoardMember';
+import dbConnect from '../lib/db';
+import BoardMember from '../models/BoardMember';
 
 async function testPersistence() {
     await dbConnect();
