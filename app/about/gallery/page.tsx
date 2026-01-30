@@ -31,11 +31,15 @@ export default function Gallery() {
       const response = await fetch('/api/gallery')
       const result = await response.json()
       if (result.success) {
-        setImages(result.data)
-        setFilteredImages(result.data)
+        const data = result.data as GalleryImage[]
+        setImages(data)
+        setFilteredImages(data)
 
         // Extract unique categories from images
-        const uniqueCategories: string[] = ['All', ...Array.from(new Set(result.data.map((img: GalleryImage) => img.category)))]
+        const uniqueCategories: string[] = [
+          'All',
+          ...Array.from(new Set(data.map((img) => img.category))),
+        ]
         setCategories(uniqueCategories)
       }
     } catch (error) {
@@ -116,7 +120,7 @@ export default function Gallery() {
                         height={600}
                         className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                      <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                         <span className="text-primary font-bold text-xs uppercase tracking-wider mb-2">
                           {img.category}
                         </span>
