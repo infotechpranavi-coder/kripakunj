@@ -1,8 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { UserPlus } from 'lucide-react';
 
-export function SocialMediaFloatingIcons() {
+interface SocialMediaFloatingIconsProps {
+  onVolunteerClick?: () => void;
+}
+
+export function SocialMediaFloatingIcons({ onVolunteerClick }: SocialMediaFloatingIconsProps) {
   return (
     <div className="fixed right-6 bottom-24 z-50 flex flex-col items-center space-y-4">
       {/* WhatsApp Floating Button */}
@@ -25,6 +30,21 @@ export function SocialMediaFloatingIcons() {
           Message us
         </span>
       </Link>
+
+      {/* Volunteer Floating Button */}
+      {onVolunteerClick && (
+        <button
+          onClick={onVolunteerClick}
+          className="bg-primary text-primary-foreground w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:shadow-primary/50 transition-all duration-300 transform hover:scale-110 group relative border-none cursor-pointer"
+          aria-label="Become a Volunteer"
+        >
+          <UserPlus className="w-7 h-7 transition-transform duration-300 group-hover:scale-110" />
+          {/* Tooltip */}
+          <span className="absolute right-full mr-4 px-3 py-1 bg-black/80 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+            Become a Volunteer
+          </span>
+        </button>
+      )}
     </div>
   );
 }

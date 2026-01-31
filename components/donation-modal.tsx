@@ -11,6 +11,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
+import { toast } from 'sonner'
+import { Loader2 } from 'lucide-react'
 
 interface DonationModalProps {
     isOpen: boolean
@@ -26,28 +28,49 @@ export function DonationModal({ isOpen, onOpenChange, campaignTitle }: DonationM
     const [phone, setPhone] = useState('')
     // const [anonymous, setAnonymous] = useState(false)
     const [donationType, setDonationType] = useState('one-time')
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        // Process donation here
-        console.log({
-            donationAmount,
+        setIsSubmitting(true)
+
+        const data = {
             firstName,
             lastName,
             email,
             phone,
-            // anonymous,
             donationType,
+            amount: donationAmount,
             campaign: campaignTitle
-        })
-        alert(`Thank you for your donation of ₹${donationAmount} to ${campaignTitle}!`)
-        // Reset form
-        setFirstName('')
-        setLastName('')
-        setEmail('')
-        setPhone('')
-        setDonationAmount(500)
-        onOpenChange(false)
+        }
+
+        try {
+            const response = await fetch('/api/donations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            })
+
+            const result = await response.json()
+
+            if (result.success) {
+                toast.success(`Thank you for your donation of ₹${donationAmount}!`)
+                // Reset form
+                setFirstName('')
+                setLastName('')
+                setEmail('')
+                setPhone('')
+                setDonationAmount(500)
+                onOpenChange(false)
+            } else {
+                toast.error(result.error || 'Failed to process donation')
+            }
+        } catch (error) {
+            console.error('Donation error:', error)
+            toast.error('An error occurred. Please try again.')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
@@ -146,8 +169,19 @@ export function DonationModal({ isOpen, onOpenChange, campaignTitle }: DonationM
                         />
                     </div>
 
-                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 mt-4">
-                        Donate ₹{donationAmount}
+                    <Button
+                        type="submit"
+                        className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 mt-4"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Processing...
+                            </>
+                        ) : (
+                            `Donate ₹${donationAmount}`
+                        )}
                     </Button>
                 </form>
             </DialogContent>
