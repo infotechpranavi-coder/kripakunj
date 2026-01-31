@@ -15,6 +15,7 @@ import { VolunteerApplication } from '@/components/volunteer-application'
 
 export default function Home() {
   const [dbCampaigns, setDbCampaigns] = useState<any[]>([])
+  const [dbEvents, setDbEvents] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
 
@@ -28,11 +29,28 @@ export default function Home() {
         }
       } catch (error) {
         console.error('Failed to fetch campaigns:', error)
-      } finally {
-        setIsLoading(false)
       }
     }
-    fetchCampaigns()
+
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('/api/events')
+        const result = await response.json()
+        if (result.success) {
+          setDbEvents(result.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch events:', error)
+      }
+    }
+
+    const loadData = async () => {
+      setIsLoading(true)
+      await Promise.all([fetchCampaigns(), fetchEvents()])
+      setIsLoading(false)
+    }
+
+    loadData()
   }, [])
 
   const heroSlides = [
@@ -219,50 +237,56 @@ export default function Home() {
           </AnimatedSection>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {[
-              {
-                title: 'URBAN ROOTS: MIYAWAKI FOREST PLANTED IN BHIWANDI',
-                category: 'Shoonya',
-                image: '/slider-environment.jpg',
-              },
-              {
-                title: 'A DAY TO REMEMBER: INCLUSIVE PICNIC WITH HELEN',
-                category: 'Gyan Daan',
-                image: '/slider-education.jpg',
-              },
-              {
-                title: 'SPARKING CHANGE: COMMUNITY SUPPORT',
-                category: 'Gyan Daan',
-                image: '/slider-community.jpg',
-              },
-            ].map((event, index) => (
-              <AnimatedSection
-                key={index}
-                direction="up"
-                delay={index * 100}
-                className="h-full"
-              >
-                <div className="group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-in-out transform hover:-translate-y-2 overflow-hidden border border-gray-100 h-full flex flex-col">
-                  <div className="relative w-full h-48 md:h-56 overflow-hidden">
-                    <Image
-                      src={event.image}
-                      alt={event.title}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </div>
-                  <div className="p-6 flex flex-col grow">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-2 h-2 bg-green-500 rotate-45"></div>
-                      <span className="text-green-600 font-semibold text-sm">{event.category}</span>
+            {(dbEvents.length > 0
+              ? dbEvents.filter(e => e.status === 'completed').slice(0, 3).map(e => ({
+                title: e.title,
+                category: e.category,
+                image: e.image,
+              }))
+              : [
+                {
+                  title: 'URBAN ROOTS: MIYAWAKI FOREST PLANTED IN BHIWANDI',
+                  category: 'Shoonya',
+                  image: '/slider-environment.jpg',
+                },
+                {
+                  title: 'A DAY TO REMEMBER: INCLUSIVE PICNIC WITH HELEN',
+                  category: 'Gyan Daan',
+                  image: '/slider-education.jpg',
+                },
+                {
+                  title: 'SPARKING CHANGE: COMMUNITY SUPPORT',
+                  category: 'Gyan Daan',
+                  image: '/slider-community.jpg',
+                },
+              ]).map((event, index) => (
+                <AnimatedSection
+                  key={index}
+                  direction="up"
+                  delay={index * 100}
+                  className="h-full"
+                >
+                  <div className="group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-in-out transform hover:-translate-y-2 overflow-hidden border border-gray-100 h-full flex flex-col">
+                    <div className="relative w-full h-48 md:h-56 overflow-hidden">
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
                     </div>
-                    <h3 className="text-lg font-bold text-foreground leading-tight group-hover:text-primary transition-colors duration-300">
-                      {event.title}
-                    </h3>
+                    <div className="p-6 flex flex-col grow">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-2 h-2 bg-green-500 rotate-45"></div>
+                        <span className="text-green-600 font-semibold text-sm">{event.category}</span>
+                      </div>
+                      <h3 className="text-lg font-bold text-foreground leading-tight group-hover:text-primary transition-colors duration-300">
+                        {event.title}
+                      </h3>
+                    </div>
                   </div>
-                </div>
-              </AnimatedSection>
-            ))}
+                </AnimatedSection>
+              ))}
           </div>
 
           <AnimatedSection direction="fade" className="text-center">
