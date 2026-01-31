@@ -15,10 +15,11 @@ import {
     Video,
     Megaphone,
     FileCheck,
-    Menu
+    Menu,
+    LogOut
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 interface AdminSidebarProps {
@@ -28,6 +29,17 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ sidebarOpen, toggleSidebar }: AdminSidebarProps) {
     const pathname = usePathname()
+    const router = useRouter()
+
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/logout', { method: 'POST' })
+            router.push('/login')
+            router.refresh()
+        } catch (error) {
+            console.error('Logout failed:', error)
+        }
+    }
 
     const sidebarItems = [
         { name: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
@@ -63,8 +75,8 @@ export default function AdminSidebar({ sidebarOpen, toggleSidebar }: AdminSideba
                                 <Link
                                     href={item.href}
                                     className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive
-                                            ? 'bg-primary/10 text-primary'
-                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                        ? 'bg-primary/10 text-primary'
+                                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                                         }`}
                                 >
                                     <item.icon className={`mr-3 h-5 w-5 ${isActive ? 'text-primary' : 'text-gray-500 dark:text-gray-400'}`} />
@@ -74,6 +86,15 @@ export default function AdminSidebar({ sidebarOpen, toggleSidebar }: AdminSideba
                         )
                     })}
                 </ul>
+                <div className="mt-8 pt-5 border-t border-gray-200 dark:border-gray-700">
+                    <button
+                        onClick={handleLogout}
+                        className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 rounded-lg transition-colors hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                        <LogOut className="mr-3 h-5 w-5" />
+                        Logout
+                    </button>
+                </div>
             </nav>
         </div>
     )

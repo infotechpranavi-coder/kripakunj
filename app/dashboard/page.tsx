@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   Users,
@@ -17,7 +17,8 @@ import {
   Search,
   Filter,
   Download,
-  Plus
+  Plus,
+  Loader2
 } from 'lucide-react'
 import AdminSidebar from '@/components/admin-sidebar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -33,51 +34,47 @@ import {
 } from '@/components/ui/chart'
 import { Bar, BarChart, Line, LineChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Cell } from 'recharts'
 
-// Mock data for the dashboard
-const statsData = [
-  { title: 'Total Campaigns', value: '24', change: '+12%', icon: Heart, color: 'text-red-500' },
-  { title: 'Active Volunteers', value: '1,150', change: '+8%', icon: Users, color: 'text-blue-500' },
-  { title: 'Funds Raised', value: '₹2.4M', change: '+15%', icon: TrendingUp, color: 'text-green-500' },
-  { title: 'Upcoming Events', value: '8', change: '+3', icon: Calendar, color: 'text-purple-500' },
-]
-
-const recentActivities = [
-  { id: 1, user: 'John Doe', action: 'donated ₹5,000', time: '2 minutes ago', type: 'donation' },
-  { id: 2, user: 'Sarah Smith', action: 'joined as volunteer', time: '15 minutes ago', type: 'volunteer' },
-  { id: 3, user: 'Mike Johnson', action: 'attended cleanup drive', time: '1 hour ago', type: 'event' },
-  { id: 4, user: 'Emma Wilson', action: 'donated ₹2,500', time: '3 hours ago', type: 'donation' },
-  { id: 5, user: 'David Brown', action: 'shared campaign', time: '5 hours ago', type: 'share' },
-]
-
-const campaignData = [
-  { name: 'Jan', raised: 40000, goal: 100000 },
-  { name: 'Feb', raised: 30000, goal: 80000 },
-  { name: 'Mar', raised: 20000, goal: 90000 },
-  { name: 'Apr', raised: 27800, goal: 85000 },
-  { name: 'May', raised: 18900, goal: 75000 },
-  { name: 'Jun', raised: 23900, goal: 95000 },
-]
-
-const volunteerDistribution = [
-  { name: 'Education', value: 35, color: '#3b82f6' },
-  { name: 'Healthcare', value: 25, color: '#ef4444' },
-  { name: 'Environment', value: 20, color: '#10b981' },
-  { name: 'Community', value: 20, color: '#8b5cf6' },
-]
-
-const topCampaigns = [
-  { id: 1, name: 'Project GyanDaan', raised: 225000, goal: 500000, progress: 45 },
-  { id: 2, name: 'Ek Ped Maa Ke Naam', raised: 63100, goal: 200000, progress: 32 },
-  { id: 3, name: 'Kill Hunger Initiative', raised: 340000, goal: 500000, progress: 68 },
-  { id: 4, name: 'Women Empowerment', raised: 300000, goal: 500000, progress: 60 },
-]
+const iconMap: { [key: string]: any } = {
+  Heart,
+  Users,
+  TrendingUp,
+  Calendar,
+}
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState<any>(null)
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
   const toggleDarkMode = () => setDarkMode(!darkMode)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/dashboard/stats')
+        const result = await response.json()
+        if (result.success) {
+          setStats(result.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch stats:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStats()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    )
+  }
 
 
 
@@ -120,20 +117,23 @@ export default function Dashboard() {
         <main className="p-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {statsData.map((stat, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <p className="text-xs text-green-500 flex items-center mt-1">
-                    {stat.change} from last month
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+            {stats?.summary.map((stat: any, index: number) => {
+              const Icon = iconMap[stat.icon] || Heart
+              return (
+                <Card key={index} className="hover:shadow-lg transition-shadow">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                    <Icon className={`h-4 w-4 ${stat.color}`} />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                    <p className="text-xs text-green-500 flex items-center mt-1">
+                      {stat.change} from last month
+                    </p>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
 
           {/* Charts and Data Grid */}
@@ -153,7 +153,7 @@ export default function Dashboard() {
                 <CardContent>
                   <ChartContainer config={{}} className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={campaignData}>
+                      <BarChart data={stats?.campaignPerformance}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
                         <YAxis />
@@ -178,7 +178,7 @@ export default function Dashboard() {
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
-                          data={volunteerDistribution}
+                          data={stats?.volunteerDistribution}
                           cx="50%"
                           cy="50%"
                           labelLine={false}
@@ -187,7 +187,7 @@ export default function Dashboard() {
                           dataKey="value"
                           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                         >
-                          {volunteerDistribution.map((entry, index) => (
+                          {stats?.volunteerDistribution.map((entry: any, index: number) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
@@ -215,7 +215,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recentActivities.map((activity) => (
+                  {stats?.recentActivities.map((activity: any) => (
                     <div key={activity.id} className="flex items-start space-x-3">
                       <div className={`w-2 h-2 rounded-full mt-2 ${activity.type === 'donation' ? 'bg-green-500' :
                         activity.type === 'volunteer' ? 'bg-blue-500' :
@@ -228,6 +228,9 @@ export default function Dashboard() {
                       <div className="text-xs text-gray-400">{activity.time}</div>
                     </div>
                   ))}
+                  {stats?.recentActivities.length === 0 && (
+                    <p className="text-center text-gray-500 text-sm py-8">No recent activities found.</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -245,7 +248,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {topCampaigns.map((campaign) => (
+                  {stats?.topCampaigns.map((campaign: any) => (
                     <div key={campaign.id} className="space-y-2">
                       <div className="flex justify-between items-center">
                         <h4 className="font-medium text-sm">{campaign.name}</h4>
@@ -260,6 +263,9 @@ export default function Dashboard() {
                       </div>
                     </div>
                   ))}
+                  {stats?.topCampaigns.length === 0 && (
+                    <p className="text-center text-gray-500 text-sm py-8">No campaigns found.</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
