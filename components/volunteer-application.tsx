@@ -21,7 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface VolunteerApplicationProps {
   isOpen: boolean;
@@ -32,18 +33,44 @@ export function VolunteerApplication({ isOpen, onOpenChange }: VolunteerApplicat
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      area: formData.get('area'),
+      experience: formData.get('experience'),
+    };
+
+    try {
+      const response = await fetch('/api/volunteers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitted(true);
+        toast.success('Application submitted successfully!');
+        setTimeout(() => {
+          onOpenChange(false);
+          setSubmitted(false);
+        }, 3000);
+      } else {
+        toast.error(result.error || 'Failed to submit application');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      toast.error('An error occurred. Please try again.');
+    } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
-      setTimeout(() => {
-        onOpenChange(false);
-        setSubmitted(false);
-      }, 2000);
-    }, 1500);
+    }
   };
 
   return (
@@ -69,21 +96,21 @@ export function VolunteerApplication({ isOpen, onOpenChange }: VolunteerApplicat
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" placeholder="John Doe" required />
+                  <Input id="name" name="name" placeholder="John Doe" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="john@example.com" required />
+                  <Input id="email" name="email" type="email" placeholder="john@example.com" required />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" type="tel" placeholder="+91 98XXX XXXXX" required />
+                  <Input id="phone" name="phone" type="tel" placeholder="+91 98XXX XXXXX" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="area">Area of Interest</Label>
-                  <Select required>
+                  <Select name="area" required>
                     <SelectTrigger id="area">
                       <SelectValue placeholder="Select Area" />
                     </SelectTrigger>
@@ -102,6 +129,7 @@ export function VolunteerApplication({ isOpen, onOpenChange }: VolunteerApplicat
                 <Label htmlFor="experience">Relevant Experience / Why join us?</Label>
                 <Textarea
                   id="experience"
+                  name="experience"
                   placeholder="Tell us a bit about yourself and why you want to volunteer..."
                   className="min-h-[100px]"
                   required
@@ -109,7 +137,14 @@ export function VolunteerApplication({ isOpen, onOpenChange }: VolunteerApplicat
               </div>
               <DialogFooter className="pt-4">
                 <Button type="submit" className="w-full h-12 text-lg font-semibold" disabled={isSubmitting}>
-                  {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    'Submit Application'
+                  )}
                 </Button>
               </DialogFooter>
             </form>
