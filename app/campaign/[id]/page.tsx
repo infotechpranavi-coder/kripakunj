@@ -8,14 +8,12 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+// No longer using local Dialog here as we use DonationModal
 import { Calendar, Users, Target, Award, Heart, MapPin, Clock, User, Tag, Eye, IndianRupee, Check } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
+import { DonationModal } from '@/components/donation-modal'
 
 // Mock data for campaigns - in a real app this would come from an API
 const campaigns = [
@@ -172,14 +170,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
   const [campaign, setCampaign] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // State for donation form
-  const [donationAmount, setDonationAmount] = useState(500)
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [anonymous, setAnonymous] = useState(false)
-  const [donationType, setDonationType] = useState('one-time')
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -236,29 +227,6 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
   const progress = ((campaign.raisedAmount || 0) / (campaign.goalAmount || 1)) * 100
   const daysLeft = campaign.endDate ? Math.ceil((new Date(campaign.endDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Process donation here
-    console.log({
-      donationAmount,
-      firstName,
-      lastName,
-      email,
-      phone,
-      anonymous,
-      donationType,
-      campaign: campaign.title
-    })
-    alert(`Thank you for your donation of ₹${donationAmount} to ${campaign.title}!`)
-    // Reset form
-    setFirstName('')
-    setLastName('')
-    setEmail('')
-    setPhone('')
-    setDonationAmount(500)
-  }
-
   return (
     <>
       <Navigation />
@@ -293,126 +261,15 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  size="lg"
-                  className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-                >
-                  Donate Now
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md mx-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold text-center text-primary">
-                    Make a Donation
-                  </DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input
-                        id="firstName"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        placeholder="First name"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input
-                        id="lastName"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        placeholder="Last name"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone (Optional)</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="Enter your phone number"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Donation Type</Label>
-                    <RadioGroup value={donationType} onValueChange={setDonationType} className="flex space-x-4">
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="one-time" id="one-time" />
-                        <Label htmlFor="one-time">One-time</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="monthly" id="monthly" />
-                        <Label htmlFor="monthly">Monthly</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Donation Amount (₹)</Label>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      {[500, 1000, 2500, 5000].map((amount) => (
-                        <button
-                          key={amount}
-                          type="button"
-                          onClick={() => setDonationAmount(amount)}
-                          className={`px-3 py-1 rounded-md border text-sm ${donationAmount === amount
-                            ? 'bg-primary text-primary-foreground border-primary'
-                            : 'border-gray-300 hover:bg-gray-100'
-                            }`}
-                        >
-                          ₹{amount}
-                        </button>
-                      ))}
-                    </div>
-                    <Input
-                      type="number"
-                      min="100"
-                      value={donationAmount}
-                      onChange={(e) => setDonationAmount(Number(e.target.value))}
-                      placeholder="Enter custom amount"
-                      required
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 mt-4">
-                    Donate ₹{donationAmount}
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-
             <Button
               size="lg"
-              variant="outline"
-              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/50 font-semibold px-8 py-6 text-lg rounded-full"
-              asChild
+              onClick={() => setIsDonationModalOpen(true)}
+              className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
             >
-              <Link href="#overview">
-                Learn More
-              </Link>
+              Donate Now
             </Button>
+
+
           </div>
         </div>
       </section>
@@ -628,116 +485,13 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                   </div>
 
                   {/* Donate Button Trigger */}
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button size="lg" className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-6 text-lg shadow-lg hover:shadow-xl transition-all">
-                        Donate Now
-                      </Button>
-                    </DialogTrigger>
-                    {/* ... Dialog Content Reused (See below note) ... */}
-                    {/* Note: I need to duplicate the DialogContent strictly inside here or reuse the component. 
-                        Since I am replacing the block, I can just inline the DialogContent here as it was before. 
-                    */}
-                    <DialogContent className="max-w-md mx-auto">
-                      <DialogHeader>
-                        <DialogTitle className="text-2xl font-bold text-center text-primary">
-                          Make a Donation
-                        </DialogTitle>
-                      </DialogHeader>
-                      <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="firstName">First Name</Label>
-                            <Input
-                              id="firstName"
-                              value={firstName}
-                              onChange={(e) => setFirstName(e.target.value)}
-                              placeholder="First name"
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="lastName">Last Name</Label>
-                            <Input
-                              id="lastName"
-                              value={lastName}
-                              onChange={(e) => setLastName(e.target.value)}
-                              placeholder="Last name"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="email">Email</Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            required
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">Phone (Optional)</Label>
-                          <Input
-                            id="phone"
-                            type="tel"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            placeholder="Enter your phone number"
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label>Donation Type</Label>
-                          <RadioGroup value={donationType} onValueChange={setDonationType} className="flex space-x-4">
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="one-time" id="one-time" />
-                              <Label htmlFor="one-time">One-time</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="monthly" id="monthly" />
-                              <Label htmlFor="monthly">Monthly</Label>
-                            </div>
-                          </RadioGroup>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label>Donation Amount (₹)</Label>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            {[500, 1000, 2500, 5000].map((amount) => (
-                              <button
-                                key={amount}
-                                type="button"
-                                onClick={() => setDonationAmount(amount)}
-                                className={`px-3 py-1 rounded-md border text-sm ${donationAmount === amount
-                                  ? 'bg-primary text-primary-foreground border-primary'
-                                  : 'border-gray-300 hover:bg-gray-100'
-                                  }`}
-                              >
-                                ₹{amount}
-                              </button>
-                            ))}
-                          </div>
-                          <Input
-                            type="number"
-                            min="100"
-                            value={donationAmount}
-                            onChange={(e) => setDonationAmount(Number(e.target.value))}
-                            placeholder="Enter custom amount"
-                            required
-                          />
-                        </div>
-
-                        <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 mt-4">
-                          Donate ₹{donationAmount}
-                        </Button>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
+                  <Button
+                    size="lg"
+                    onClick={() => setIsDonationModalOpen(true)}
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-6 text-lg shadow-lg hover:shadow-xl transition-all"
+                  >
+                    Donate Now
+                  </Button>
 
                   <div className="text-center text-xs text-muted-foreground">
                     All donations are tax-deductible under 80G.
@@ -900,129 +654,19 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
       </section>
 
       {/* Floating Donate Button */}
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button
-            className="fixed bottom-8 right-8 h-16 w-16 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl z-50 animate-bounce"
-            aria-label="Donate Now"
-          >
-            <IndianRupee className="h-8 w-8" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-md mx-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-center text-primary">
-              Make a Donation
-            </DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="First name"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Last name"
-                  required
-                />
-              </div>
-            </div>
+      <Button
+        onClick={() => setIsDonationModalOpen(true)}
+        className="fixed bottom-8 right-8 h-16 w-16 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl z-40 animate-bounce"
+        aria-label="Donate Now"
+      >
+        <IndianRupee className="h-8 w-8" />
+      </Button>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone (Optional)</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Enter your phone number"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Donation Type</Label>
-              <RadioGroup value={donationType} onValueChange={setDonationType} className="flex space-x-4">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="one-time" id="one-time" />
-                  <Label htmlFor="one-time">One-time</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="monthly" id="monthly" />
-                  <Label htmlFor="monthly">Monthly</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Donation Amount (₹)</Label>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {[500, 1000, 2500, 5000].map((amount) => (
-                  <button
-                    key={amount}
-                    type="button"
-                    onClick={() => setDonationAmount(amount)}
-                    className={`px-3 py-1 rounded-md border text-sm ${donationAmount === amount
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'border-gray-300 hover:bg-gray-100'
-                      }`}
-                  >
-                    ₹{amount}
-                  </button>
-                ))}
-              </div>
-              <Input
-                type="number"
-                min="100"
-                value={donationAmount}
-                onChange={(e) => setDonationAmount(Number(e.target.value))}
-                placeholder="Enter custom amount"
-                required
-              />
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="anonymous"
-                checked={anonymous}
-                onChange={(e) => setAnonymous(e.target.checked)}
-                className="h-4 w-4 text-primary rounded"
-              />
-              <Label htmlFor="anonymous" className="text-sm">
-                Make this donation anonymously
-              </Label>
-            </div>
-
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3">
-              Proceed to Payment
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-
+      <DonationModal
+        isOpen={isDonationModalOpen}
+        onOpenChange={setIsDonationModalOpen}
+        campaignTitle={campaign.title}
+      />
       <Footer />
     </>
   )

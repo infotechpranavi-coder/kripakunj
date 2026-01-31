@@ -1,41 +1,41 @@
+'use client'
+
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { AnimatedSection } from '@/components/animated-section'
-import { ShieldCheck, Download } from 'lucide-react'
+import { ShieldCheck, Download, ExternalLink, Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+
+interface ComplianceDocument {
+  _id: string
+  title: string
+  imageUrl: string
+  date: string
+  docUrl?: string
+}
 
 export default function Compliance() {
-  const complianceItems = [
-    {
-      title: 'Registration Certificate',
-      ref: 'Reg No: E-XXXX/Mumbai',
-      desc: 'Official registration as a Charitable Trust under the Bombay Public Trusts Act.',
-    },
-    {
-      title: '12A Registration',
-      ref: 'Income Tax Act, 1961',
-      desc: 'Registration for income tax exemption for the trust.',
-    },
-    {
-      title: '80G Certificate',
-      ref: 'Tax Benefits for Donors',
-      desc: 'Enabling donors to claim tax deductions on their contributions to Kripa Kunj.',
-    },
-    {
-      title: 'NITI Aayog (NGO Darpan)',
-      ref: 'Unique ID: MH/20XX/XXXXXXX',
-      desc: 'Recognition and registration on the government of India\'s NGO portal.',
-    },
-    {
-      title: 'FCRA Registration',
-      ref: 'Foreign Contribution Regulation',
-      desc: 'Compliance for receiving international donations for social development.',
-    },
-    {
-      title: 'Annual Audited Statements',
-      ref: 'FY 2024-25',
-      desc: 'Complete financial transparency through certified annual audits.',
-    },
-  ]
+  const [documents, setDocuments] = useState<ComplianceDocument[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      try {
+        const res = await fetch('/api/compliance')
+        const data = await res.json()
+        if (data.success) {
+          setDocuments(data.data)
+        }
+      } catch (error) {
+        console.error('Error fetching compliance documents:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchDocuments()
+  }, [])
 
   return (
     <>
@@ -54,30 +54,60 @@ export default function Compliance() {
 
         <section className="py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {complianceItems.map((item, index) => (
-                <AnimatedSection key={index} direction="up" delay={index * 100}>
-                  <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 group h-full flex flex-col">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                      <ShieldCheck className="w-6 h-6" />
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader2 className="w-12 h-12 text-primary animate-spin" />
+              </div>
+            ) : documents.length > 0 ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {documents.map((doc, index) => (
+                  <AnimatedSection key={doc._id} direction="up" delay={index * 100}>
+                    <div className="bg-white rounded-[2rem] overflow-hidden shadow-none hover:shadow-xl transition-all duration-300 border-4 border-black group h-full flex flex-col relative scale-95 hover:scale-100">
+                      <div className="relative h-[500px] w-full bg-white overflow-hidden flex items-center justify-center p-8">
+                        <img
+                          src={doc.imageUrl}
+                          alt={doc.title}
+                          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                        />
+                        {/* Overlay Title */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6 pt-20 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                          <h3 className="text-xl font-bold text-white mb-2 line-clamp-2 text-center">
+                            {doc.title}
+                          </h3>
+                          {doc.docUrl ? (
+                            <div className="flex items-center justify-center gap-2 text-white/90 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
+                              <ExternalLink className="w-4 h-4" /> View Document
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center gap-2 text-white/90 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
+                              <ShieldCheck className="w-4 h-4" /> Verified
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Clickable Overlay Link */}
+                      {doc.docUrl && (
+                        <a
+                          href={doc.docUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute inset-0 z-10"
+                          title={`View ${doc.title}`}
+                        >
+                          <span className="sr-only">View {doc.title}</span>
+                        </a>
+                      )}
                     </div>
-                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-primary font-bold text-xs uppercase tracking-wider mb-4">
-                      {item.ref}
-                    </p>
-                    <p className="text-foreground/70 text-sm leading-relaxed mb-6 grow">
-                      {item.desc}
-                    </p>
-                    <button className="flex items-center gap-2 text-foreground/50 font-bold text-xs hover:text-primary transition-colors mt-auto">
-                      <Download className="w-4 h-4" /> View Certificate
-                    </button>
-                  </div>
-                </AnimatedSection>
-              ))}
-            </div>
-            
+                  </AnimatedSection>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-lg text-muted-foreground">No compliance documents available at the moment.</p>
+              </div>
+            )}
+
             <div className="mt-16 bg-white rounded-2xl p-8 md:p-12 shadow-xl border border-primary/10">
               <div className="max-w-3xl">
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Transparency Commitment</h2>

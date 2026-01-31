@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { DonationModal } from '@/components/donation-modal'
 
 interface HeroSlide {
   src: string
@@ -25,6 +26,7 @@ export function HeroSlider({
 }: HeroSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlay, setIsAutoPlay] = useState(autoPlay)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     if (!isAutoPlay) return
@@ -62,9 +64,8 @@ export function HeroSlider({
         {slides.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-opacity duration-700 ${
-              index === currentIndex ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`absolute inset-0 transition-opacity duration-700 ${index === currentIndex ? 'opacity-100' : 'opacity-0'
+              }`}
           >
             <Image
               src={slide.src || "/placeholder.svg"}
@@ -75,7 +76,7 @@ export function HeroSlider({
             />
             {/* Dark overlay for better text readability */}
             <div className="absolute inset-0 bg-black/40" />
-            
+
             {/* Text Content Overlay */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -94,18 +95,13 @@ export function HeroSlider({
                     </p>
                   )}
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <Link
-                      href="/volunteer"
-                      className="px-8 py-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white rounded-lg font-semibold hover:bg-white/20 transition text-center inline-block"
-                    >
-                      Become a Volunteer
-                    </Link>
-                    <Link
-                      href="/contact"
-                      className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition text-center inline-block"
+
+                    <button
+                      onClick={() => setIsModalOpen(true)}
+                      className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition text-center inline-block cursor-pointer"
                     >
                       Donate Now
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -162,15 +158,19 @@ export function HeroSlider({
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`transition-all rounded-full ${
-              index === currentIndex
-                ? 'bg-primary w-3 h-3'
-                : 'bg-white/60 w-2.5 h-2.5 hover:bg-white/80'
-            }`}
+            className={`transition-all rounded-full ${index === currentIndex
+              ? 'bg-primary w-3 h-3'
+              : 'bg-white/60 w-2.5 h-2.5 hover:bg-white/80'
+              }`}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>
+      <DonationModal
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        campaignTitle="General Donation"
+      />
     </div>
   )
 }

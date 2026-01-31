@@ -33,6 +33,32 @@ export default function CreateCampaignModal() {
     const [isLoading, setIsLoading] = useState(false)
     const [open, setOpen] = useState(false)
     const [selectedFiles, setSelectedFiles] = useState<(File | null)[]>([null, null, null])
+    const [categories, setCategories] = useState([
+        { value: 'education', label: 'Education' },
+        { value: 'health', label: 'Health' },
+        { value: 'environment', label: 'Environment' },
+        { value: 'social-welfare', label: 'Social Welfare' },
+        { value: 'technology', label: 'Technology' },
+    ])
+    const [isAddingCategory, setIsAddingCategory] = useState(false)
+    const [newCategory, setNewCategory] = useState('')
+
+    const handleAddCategory = () => {
+        if (!newCategory.trim()) {
+            setIsAddingCategory(false)
+            return
+        }
+
+        const value = newCategory.toLowerCase().replace(/[^a-z0-9]/g, '-')
+        const newCat = { value, label: newCategory.trim() }
+
+        setCategories([...categories, newCat])
+        handleSectionChange('campaignDetails', 'category', value)
+        setNewCategory('')
+        setIsAddingCategory(false)
+        toast.success(`Category "${newCat.label}" added`)
+    }
+
     const [formData, setFormData] = useState({
         campaignInformation: {
             title: "",
@@ -351,22 +377,62 @@ export default function CreateCampaignModal() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="category">Campaign Category</Label>
-                                        <Select
-                                            value={formData.campaignDetails.category}
-                                            onValueChange={(val) => handleSectionChange('campaignDetails', 'category', val)}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a category" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="education">Education</SelectItem>
-                                                <SelectItem value="health">Health</SelectItem>
-                                                <SelectItem value="environment">Environment</SelectItem>
-                                                <SelectItem value="social-welfare">Social Welfare</SelectItem>
-                                                <SelectItem value="technology">Technology</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="category">Campaign Category</Label>
+                                            {!isAddingCategory && (
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-6 px-2 text-xs text-primary"
+                                                    onClick={() => setIsAddingCategory(true)}
+                                                >
+                                                    <Plus className="h-3 w-3 mr-1" /> New Category
+                                                </Button>
+                                            )}
+                                        </div>
+
+                                        {isAddingCategory ? (
+                                            <div className="flex gap-2">
+                                                <Input
+                                                    value={newCategory}
+                                                    onChange={(e) => setNewCategory(e.target.value)}
+                                                    placeholder="Enter category name"
+                                                    className="h-10"
+                                                    autoFocus
+                                                />
+                                                <Button type="button" size="sm" onClick={handleAddCategory}>
+                                                    Add
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setIsAddingCategory(false)
+                                                        setNewCategory('')
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <Select
+                                                value={formData.campaignDetails.category}
+                                                onValueChange={(val) => handleSectionChange('campaignDetails', 'category', val)}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a category" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {categories.map((cat) => (
+                                                        <SelectItem key={cat.value} value={cat.value}>
+                                                            {cat.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Plus,
   Search,
@@ -24,11 +24,13 @@ import {
   EyeOff,
   Bell
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Input } from '@/components/ui/input'
+import Link from 'next/link'
 import {
   Table,
   TableBody,
@@ -38,6 +40,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import AdminSidebar from '@/components/admin-sidebar'
+import AddEventModal from './AddEventModal'
+import ViewEventDetailsModal from './ViewEventDetailsModal'
+import EditEventModal from './EditEventModal'
+
 
 const events = [
   {
@@ -127,18 +133,70 @@ const categoryColors = {
 }
 
 export default function EventsPage() {
+  const [eventList, setEventList] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
+  const [viewEvent, setViewEvent] = useState<any>(null)
+  const [isViewOpen, setIsViewOpen] = useState(false)
+  const [editEvent, setEditEvent] = useState<any>(null)
+  const [isEditOpen, setIsEditOpen] = useState(false)
+
+  useEffect(() => {
+    fetchEvents()
+  }, [])
+
+  const fetchEvents = async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/events')
+      const result = await response.json()
+      if (result.success) {
+        // Map backend fields to frontend if necessary
+        const mappedEvents = result.data.map((e: any) => ({
+          ...e,
+          id: e._id, // Add this for consistency with links
+          name: e.title // dashboard uses 'name'
+        }))
+        setEventList(mappedEvents)
+      }
+    } catch (error) {
+      console.error('Failed to fetch events:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this event?')) return;
+
+    try {
+      const response = await fetch(`/api/events/${id}`, {
+        method: 'DELETE'
+      });
+      const result = await response.json();
+      if (result.success) {
+        toast.success('Event deleted successfully');
+        fetchEvents();
+      } else {
+        toast.error(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      toast.error('Failed to delete event');
+      console.error(error);
+    }
+  }
+
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
   const toggleDarkMode = () => setDarkMode(!darkMode)
 
 
 
-  const filteredEvents = events.filter(event => {
+  const filteredEvents = eventList.filter(event => {
     const matchesSearch = event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'all' || event.status === statusFilter
@@ -146,10 +204,11 @@ export default function EventsPage() {
     return matchesSearch && matchesStatus && matchesCategory
   })
 
-  const upcomingEvents = events.filter(e => e.status === 'upcoming').length
-  const completedEvents = events.filter(e => e.status === 'completed').length
-  const totalParticipants = events.reduce((sum, event) => sum + event.registered, 0)
-  const totalVolunteers = events.reduce((sum, event) => sum + event.volunteers, 0)
+  const upcomingEventsCount = eventList.filter(e => e.status === 'upcoming').length
+  const completedEventsCount = eventList.filter(e => e.status === 'completed').length
+  const totalParticipants = eventList.reduce((sum, event) => sum + event.registered, 0)
+  const totalVolunteers = eventList.reduce((sum, event) => sum + event.volunteers, 0)
+
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
@@ -166,7 +225,13 @@ export default function EventsPage() {
                 <Menu className="h-5 w-5" />
               </Button>
               <h2 className="text-lg font-semibold">Events</h2>
+              <div className="ml-4">
+                <AddEventModal onSuccess={() => {
+                  fetchEvents()
+                }} />
+              </div>
             </div>
+
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm" onClick={toggleDarkMode}>
                 {darkMode ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -194,7 +259,7 @@ export default function EventsPage() {
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{events.length}</div>
+                <div className="text-2xl font-bold">{eventList.length}</div>
                 <p className="text-xs text-muted-foreground">+2 from last month</p>
               </CardContent>
             </Card>
@@ -204,8 +269,8 @@ export default function EventsPage() {
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{upcomingEvents}</div>
-                <p className="text-xs text-muted-foreground">{Math.round((upcomingEvents / events.length) * 100)}% upcoming</p>
+                <div className="text-2xl font-bold">{upcomingEventsCount}</div>
+                <p className="text-xs text-muted-foreground">{Math.round((upcomingEventsCount / eventList.length) * 100)}% upcoming</p>
               </CardContent>
             </Card>
             <Card>
@@ -225,7 +290,8 @@ export default function EventsPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalVolunteers}</div>
-                <p className="text-xs text-muted-foreground">Avg. {Math.round(totalVolunteers / events.length)} per event</p>
+                <p className="text-xs text-muted-foreground">Avg. {Math.round(totalVolunteers / eventList.length)} per event</p>
+
               </CardContent>
             </Card>
           </div>
@@ -352,14 +418,28 @@ export default function EventsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setViewEvent(event)
+                              setIsViewOpen(true)
+                            }}
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setEditEvent(event)
+                              setIsEditOpen(true)
+                            }}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
-                            <Trash2 className="h-4 w-4" />
+                          <Button variant="ghost" size="sm" onClick={() => handleDelete(event.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </div>
                       </TableCell>
@@ -371,6 +451,17 @@ export default function EventsPage() {
           </Card>
         </div>
       </div>
+      <ViewEventDetailsModal
+        event={viewEvent}
+        open={isViewOpen}
+        onOpenChange={setIsViewOpen}
+      />
+      <EditEventModal
+        event={editEvent}
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        onSuccess={fetchEvents}
+      />
     </div>
   )
 }

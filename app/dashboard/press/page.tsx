@@ -20,6 +20,8 @@ interface PressRelease {
     title: string
     imageUrl: string
     date: string
+    createdAt?: string
+    updatedAt?: string
 }
 
 export default function PressReleasePage() {
@@ -129,7 +131,7 @@ export default function PressReleasePage() {
                                             {item.title}
                                         </h3>
                                         <p className="text-xs text-gray-500">
-                                            {new Date(item.date || item.createdAt || item.updatedAt).toLocaleDateString?.() ?? ''}
+                                            {new Date(item.date || item.createdAt || item.updatedAt || Date.now()).toLocaleDateString?.() ?? ''}
                                         </p>
                                     </CardContent>
                                 </Card>

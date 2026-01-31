@@ -1,9 +1,48 @@
+'use client'
+
+import React, { useState, useEffect } from 'react'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { HeroSlider } from '@/components/hero-slider'
 import Link from 'next/link'
+import { upcomingEvents as staticUpcomingEvents, pastEvents as staticPastEvents } from '@/lib/events-data'
 
 export default function Events() {
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
+  const [pastEvents, setPastEvents] = useState<any[]>(staticPastEvents)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    fetchEvents()
+  }, [])
+
+  const fetchEvents = async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/events')
+      const result = await response.json()
+      if (result.success && result.data.length > 0) {
+        const mappedEvents = result.data.map((e: any) => ({
+          ...e,
+          id: e._id, // Ensure id is available for links
+          date: new Date(e.date).toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          })
+        }))
+        setUpcomingEvents(mappedEvents)
+      } else {
+        setUpcomingEvents(staticUpcomingEvents)
+      }
+    } catch (error) {
+      console.error('Failed to fetch events:', error)
+      setUpcomingEvents(staticUpcomingEvents)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const heroSlides = [
     {
       src: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=1920&q=80',
@@ -27,195 +66,11 @@ export default function Events() {
       description: 'Participate in events that create lasting change - from tree plantation drives to women empowerment workshops, blood donation camps to food distribution initiatives.',
     },
   ]
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: 'Menstrual Health Awareness Drive',
-      date: 'Feb 15, 2025',
-      location: 'Mumbai, Maharashtra',
-      description:
-        'Join us for an informative session on menstrual health and breaking social taboos around menstruation. Interactive sessions with health experts.',
-      category: 'Health',
-      time: '10:00 AM - 2:00 PM',
-      interested: '250+',
-      image: '/slider-community.jpg',
-    },
-    {
-      id: 2,
-      title: 'Open School Inauguration',
-      date: 'Feb 20, 2025',
-      location: 'Mira Road, Mumbai',
-      description:
-        'Celebrate the opening of our new open school with free education for 200+ underprivileged children. Meet students, volunteers, and educators.',
-      category: 'Education',
-      time: '9:00 AM - 12:00 PM',
-      interested: '300+',
-      image: '/slider-education.jpg',
-    },
-    {
-      id: 3,
-      title: 'Beach Cleaning Drive - Kinaara',
-      date: 'Feb 28, 2025',
-      location: 'Juhu Beach, Mumbai',
-      description:
-        'Participate in our monthly beach cleaning initiative to protect our marine ecosystem. Bring gloves and enthusiasm!',
-      category: 'Environment',
-      time: '6:00 AM - 10:00 AM',
-      interested: '150+',
-      image: '/slider-environment.jpg',
-    },
-    {
-      id: 4,
-      title: 'Blood Donation Camp',
-      date: 'Mar 5, 2025',
-      location: 'Crystal Plaza, Mumbai',
-      description:
-        'Save lives! Donate blood and help us reach our target of 500 units this month. Medical professionals on-site, refreshments provided.',
-      category: 'Health',
-      time: '9:00 AM - 5:00 PM',
-      interested: '400+',
-      image: '/slider-community.jpg',
-    },
-    {
-      id: 5,
-      title: 'Women Empowerment Workshop - Sewing Skills',
-      date: 'Mar 10, 2025',
-      location: 'Mumbai, Maharashtra',
-      description:
-        'Learn sewing skills and explore employment opportunities in our empowerment program. Free materials provided. Certificate upon completion.',
-      category: 'Empowerment',
-      time: '10:00 AM - 4:00 PM',
-      interested: '100+',
-      image: '/slider-education.jpg',
-    },
-    {
-      id: 6,
-      title: 'Waste Management & Recycling Workshop (Project Shoonya)',
-      date: 'Mar 15, 2025',
-      location: 'Multiple Locations',
-      description:
-        'Educational sessions on proper waste disposal and recycling practices. Learn how to segregate waste and create a sustainable lifestyle.',
-      category: 'Environment',
-      time: '2:00 PM - 5:00 PM',
-      interested: '180+',
-      image: '/slider-environment.jpg',
-    },
-    {
-      id: 7,
-      title: 'Food Distribution Drive - Kill Hunger',
-      date: 'Mar 20, 2025',
-      location: 'Slum Areas, Mumbai',
-      description:
-        'Help us distribute food packages and nutrition support to underprivileged families. Direct community impact and personal fulfillment.',
-      category: 'Food Security',
-      time: '8:00 AM - 12:00 PM',
-      interested: '200+',
-      image: '/slider-community.jpg',
-    },
-    {
-      id: 8,
-      title: 'Tree Plantation Campaign',
-      date: 'Mar 25, 2025',
-      location: 'Central Park, Mumbai',
-      description:
-        'Plant 1000+ trees with us to combat climate change. Saplings provided. Certificates and refreshments for all participants.',
-      category: 'Environment',
-      time: '6:00 AM - 10:00 AM',
-      interested: '350+',
-      image: '/slider-environment.jpg',
-    },
-    {
-      id: 9,
-      title: 'Children\'s Nutrition & Health Checkup Camp',
-      date: 'Apr 2, 2025',
-      location: 'Community Center, Mumbai',
-      description:
-        'Free health checkups, nutrition assessment, and health awareness for children. Parents consultation included. No registration required.',
-      category: 'Health',
-      time: '9:00 AM - 4:00 PM',
-      interested: '320+',
-      image: '/slider-education.jpg',
-    },
-    {
-      id: 10,
-      title: 'Leadership Training for Young Volunteers',
-      date: 'Apr 10, 2025',
-      location: 'Head Office, Mira Road',
-      description:
-        'Develop leadership and organizational skills. Learn about community development and social impact. Limited seats - Early registration recommended.',
-      category: 'Training',
-      time: '10:00 AM - 5:00 PM',
-      interested: '80+',
-      image: '/slider-community.jpg',
-    },
-  ]
+  // upcomingEvents is now imported from lib/events-data.ts
 
-  const pastEvents = [
-    {
-      title: 'Annual Charity Drive 2024',
-      date: 'Dec 1, 2024',
-      raised: '₹15 Lakhs',
-      participants: '500+',
-      impact: 'Funded 3 new classrooms',
-      image: '/slider-community.jpg',
-    },
-    {
-      title: 'Children\'s Day Celebration',
-      date: 'Nov 14, 2024',
-      raised: 'Gifts & Education Supplies',
-      participants: '300+',
-      impact: 'Distributed to 500+ children',
-      image: '/slider-education.jpg',
-    },
-    {
-      title: 'Tree Plantation Campaign',
-      date: 'Oct 20, 2024',
-      raised: '5,000 Trees Planted',
-      participants: '200+',
-      impact: 'Carbon offset equivalent to 5 homes',
-      image: '/slider-environment.jpg',
-    },
-    {
-      title: 'Health Checkup Camp',
-      date: 'Sep 15, 2024',
-      raised: 'Free Medical Checkups',
-      participants: '400+',
-      impact: 'Identified & treated 50+ cases',
-      image: '/slider-community.jpg',
-    },
-    {
-      title: 'Beach Cleaning Drive - Summer 2024',
-      date: 'Jun 15, 2024',
-      raised: '2 Tons Waste Collected',
-      participants: '150+',
-      impact: 'Marine life protection',
-      image: '/slider-environment.jpg',
-    },
-    {
-      title: 'Women Empowerment Bazaar',
-      date: 'May 20, 2024',
-      raised: '₹5 Lakhs Sales',
-      participants: '80+ Women',
-      impact: 'Generated monthly income',
-      image: '/slider-education.jpg',
-    },
-    {
-      title: 'Blood Donation Marathon',
-      date: 'Apr 5, 2024',
-      raised: '300 Units Collected',
-      participants: '450+',
-      impact: 'Saved ~900 lives',
-      image: '/slider-community.jpg',
-    },
-    {
-      title: 'School Supply Drive',
-      date: 'Jan 30, 2024',
-      raised: 'Books & Stationery',
-      participants: '250+',
-      impact: 'Enabled 400+ children to attend school',
-      image: '/slider-education.jpg',
-    },
-  ]
+
+  // pastEvents is now imported from lib/events-data.ts
+
 
   return (
     <>
@@ -239,9 +94,9 @@ export default function Events() {
                 className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col"
               >
                 <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={event.image} 
-                    alt={event.title} 
+                  <img
+                    src={event.image}
+                    alt={event.title}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
@@ -311,9 +166,9 @@ export default function Events() {
             {pastEvents.map((event, index) => (
               <div key={index} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col">
                 <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={event.image} 
-                    alt={event.title} 
+                  <img
+                    src={event.image}
+                    alt={event.title}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
@@ -357,7 +212,7 @@ export default function Events() {
 
       {/* Call to Action */}
       <section className="relative text-primary-foreground py-16 md:py-24 overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url('/slider-community.jpg')`,

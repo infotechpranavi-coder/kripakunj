@@ -11,10 +11,12 @@ import { SocialMediaFloatingIcons } from '@/components/social-media-floating-ico
 import { TestimonialCarousel } from '@/components/testimonial-carousel'
 import Image from 'next/image'
 import Link from 'next/link'
+import { VolunteerApplication } from '@/components/volunteer-application'
 
 export default function Home() {
   const [dbCampaigns, setDbCampaigns] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -483,9 +485,9 @@ export default function Home() {
           </AnimatedSection>
           <AnimatedSection direction="up" delay={300}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/volunteer"
-                className="group relative px-8 py-3 bg-secondary text-secondary-foreground rounded-xl font-semibold hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105 hover:shadow-xl overflow-hidden"
+              <button
+                onClick={() => setIsVolunteerModalOpen(true)}
+                className="group relative px-8 py-3 bg-secondary text-secondary-foreground rounded-xl font-semibold hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105 hover:shadow-xl overflow-hidden cursor-pointer"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   Volunteer With Us
@@ -494,13 +496,8 @@ export default function Home() {
                   </svg>
                 </span>
                 <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-              </Link>
-              <Link
-                href="/contact"
-                className="px-8 py-3 border-2 border-primary-foreground rounded-xl font-semibold hover:bg-primary-foreground/10 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-              >
-                Get In Touch
-              </Link>
+              </button>
+
             </div>
           </AnimatedSection>
         </div>
@@ -508,6 +505,10 @@ export default function Home() {
 
       <SocialMediaFloatingIcons />
       <Footer />
+      <VolunteerApplication
+        isOpen={isVolunteerModalOpen}
+        onOpenChange={setIsVolunteerModalOpen}
+      />
     </>
   )
 }

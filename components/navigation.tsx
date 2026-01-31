@@ -11,10 +11,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
+import { DonationModal } from '@/components/donation-modal'
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isAboutOpen, setIsAboutOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const aboutOptions = [
     { name: 'About Us', href: '/about' },
@@ -54,7 +56,7 @@ export function Navigation() {
             >
               Home
             </Link>
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary font-medium transition cursor-pointer outline-none">
                 About <ChevronDown className="w-4 h-4" />
@@ -94,12 +96,12 @@ export function Navigation() {
             >
               Contact
             </Link>
-            <Link
-              href="/contact"
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition"
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition cursor-pointer"
             >
               Donate
-            </Link>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -108,19 +110,16 @@ export function Navigation() {
             className="md:hidden flex flex-col gap-1.5"
           >
             <span
-              className={`h-0.5 w-6 bg-primary transition-transform ${
-                isOpen ? 'rotate-45 translate-y-2' : ''
-              }`}
+              className={`h-0.5 w-6 bg-primary transition-transform ${isOpen ? 'rotate-45 translate-y-2' : ''
+                }`}
             />
             <span
-              className={`h-0.5 w-6 bg-primary transition-opacity ${
-                isOpen ? 'opacity-0' : ''
-              }`}
+              className={`h-0.5 w-6 bg-primary transition-opacity ${isOpen ? 'opacity-0' : ''
+                }`}
             />
             <span
-              className={`h-0.5 w-6 bg-primary transition-transform ${
-                isOpen ? '-rotate-45 -translate-y-2' : ''
-              }`}
+              className={`h-0.5 w-6 bg-primary transition-transform ${isOpen ? '-rotate-45 -translate-y-2' : ''
+                }`}
             />
           </button>
         </div>
@@ -135,7 +134,7 @@ export function Navigation() {
             >
               Home
             </Link>
-            
+
             <div className="flex flex-col">
               <button
                 onClick={() => setIsAboutOpen(!isAboutOpen)}
@@ -187,16 +186,24 @@ export function Navigation() {
             >
               Contact
             </Link>
-            <Link
-              href="/contact"
-              onClick={() => setIsOpen(false)}
-              className="block px-4 py-2 bg-primary text-primary-foreground rounded font-medium hover:opacity-90 text-center"
+            <button
+              onClick={() => {
+                setIsOpen(false)
+                setIsModalOpen(true)
+              }}
+              className="block w-full px-4 py-2 bg-primary text-primary-foreground rounded font-medium hover:opacity-90 text-center cursor-pointer"
             >
               Donate
-            </Link>
+            </button>
           </div>
         )}
       </div>
-    </nav>
+
+      <DonationModal
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        campaignTitle="General Donation"
+      />
+    </nav >
   )
 }
