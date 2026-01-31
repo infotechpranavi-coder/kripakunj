@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Plus,
   Search,
@@ -20,7 +20,9 @@ import {
   Menu,
   X,
   EyeOff,
-  Bell
+  Bell,
+  Clock,
+  Loader2
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -36,81 +38,6 @@ import {
 } from "@/components/ui/table"
 import AdminSidebar from '@/components/admin-sidebar'
 
-const donations = [
-  {
-    id: 1,
-    donor: 'John Doe',
-    email: 'john.doe@example.com',
-    amount: 5000,
-    currency: 'INR',
-    date: '2024-02-15',
-    campaign: 'Project GyanDaan',
-    method: 'Credit Card',
-    status: 'completed',
-    receipt: 'RCPT-001'
-  },
-  {
-    id: 2,
-    donor: 'Sarah Smith',
-    email: 'sarah.smith@example.com',
-    amount: 2500,
-    currency: 'INR',
-    date: '2024-02-14',
-    campaign: 'Ek Ped Maa Ke Naam',
-    method: 'UPI',
-    status: 'completed',
-    receipt: 'RCPT-002'
-  },
-  {
-    id: 3,
-    donor: 'Mike Johnson',
-    email: 'mike.johnson@example.com',
-    amount: 10000,
-    currency: 'INR',
-    date: '2024-02-13',
-    campaign: 'Kill Hunger Initiative',
-    method: 'Bank Transfer',
-    status: 'completed',
-    receipt: 'RCPT-003'
-  },
-  {
-    id: 4,
-    donor: 'Emma Wilson',
-    email: 'emma.wilson@example.com',
-    amount: 7500,
-    currency: 'INR',
-    date: '2024-02-12',
-    campaign: 'Women Empowerment Program',
-    method: 'Credit Card',
-    status: 'pending',
-    receipt: 'RCPT-004'
-  },
-  {
-    id: 5,
-    donor: 'David Brown',
-    email: 'david.brown@example.com',
-    amount: 3000,
-    currency: 'INR',
-    date: '2024-02-11',
-    campaign: 'Project Shoonya',
-    method: 'UPI',
-    status: 'completed',
-    receipt: 'RCPT-005'
-  },
-  {
-    id: 6,
-    donor: 'Lisa Anderson',
-    email: 'lisa.anderson@example.com',
-    amount: 15000,
-    currency: 'INR',
-    date: '2024-02-10',
-    campaign: 'Project GyanDaan',
-    method: 'Credit Card',
-    status: 'completed',
-    receipt: 'RCPT-006'
-  }
-]
-
 const statusColors = {
   completed: 'bg-green-100 text-green-800',
   pending: 'bg-yellow-100 text-yellow-800',
@@ -118,47 +45,60 @@ const statusColors = {
   refunded: 'bg-gray-100 text-gray-800'
 }
 
-const methodColors = {
-  'Credit Card': 'bg-blue-100 text-blue-800',
-  'UPI': 'bg-green-100 text-green-800',
-  'Bank Transfer': 'bg-purple-100 text-purple-800',
-  'PayPal': 'bg-indigo-100 text-indigo-800'
-}
-
 export default function DonationsPage() {
+  const [donationsList, setDonationsList] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [methodFilter, setMethodFilter] = useState('all')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
+
+  useEffect(() => {
+    fetchDonations()
+  }, [])
+
+  const fetchDonations = async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/donations')
+      const result = await response.json()
+      if (result.success) {
+        setDonationsList(result.data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch donations:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
   const toggleDarkMode = () => setDarkMode(!darkMode)
 
-
-
-  const filteredDonations = donations.filter(donation => {
-    const matchesSearch = donation.donor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredDonations = donationsList.filter(donation => {
+    const fullName = `${donation.firstName} ${donation.lastName}`.toLowerCase()
+    const matchesSearch = fullName.includes(searchTerm.toLowerCase()) ||
       donation.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       donation.campaign.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'all' || donation.status === statusFilter
-    const matchesMethod = methodFilter === 'all' || donation.method === methodFilter
-    return matchesSearch && matchesStatus && matchesMethod
+    return matchesSearch && matchesStatus
   })
 
-  const totalAmount = donations.reduce((sum, donation) => sum + donation.amount, 0)
-  const completedAmount = donations.filter(d => d.status === 'completed').reduce((sum, donation) => sum + donation.amount, 0)
-  const pendingAmount = donations.filter(d => d.status === 'pending').reduce((sum, donation) => sum + donation.amount, 0)
-  const completedDonations = donations.filter(d => d.status === 'completed').length
+  const stats = {
+    total: donationsList.reduce((sum, d) => sum + d.amount, 0),
+    count: donationsList.length,
+    completed: donationsList.filter(d => d.status === 'completed').reduce((sum, d) => sum + d.amount, 0),
+    pending: donationsList.filter(d => d.status === 'pending').reduce((sum, d) => sum + d.amount, 0),
+    successRate: donationsList.length > 0
+      ? Math.round((donationsList.filter(d => d.status === 'completed').length / donationsList.length) * 100)
+      : 0
+  }
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-      {/* Sidebar */}
       <AdminSidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
-      {/* Main Content */}
       <div className="lg:ml-64">
-        {/* Header */}
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between h-16 px-4">
             <div className="flex items-center">
@@ -171,16 +111,6 @@ export default function DonationsPage() {
               <Button variant="ghost" size="sm" onClick={toggleDarkMode}>
                 {darkMode ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </Button>
-              <Button variant="ghost" size="sm">
-                <Bell className="h-5 w-5" />
-                <Badge className="ml-1">3</Badge>
-              </Button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
-                  A
-                </div>
-                <span className="text-sm font-medium">Admin</span>
-              </div>
             </div>
           </div>
         </header>
@@ -190,12 +120,12 @@ export default function DonationsPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Donations</CardTitle>
+                <CardTitle className="text-sm font-medium">Total Raised</CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">₹{totalAmount.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">{donations.length} total donations</p>
+                <div className="text-2xl font-bold">₹{stats.total.toLocaleString()}</div>
+                <p className="text-xs text-muted-foreground">{stats.count} total donations</p>
               </CardContent>
             </Card>
             <Card>
@@ -204,30 +134,28 @@ export default function DonationsPage() {
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">₹{completedAmount.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">{Math.round((completedAmount / totalAmount) * 100)}% of total</p>
+                <div className="text-2xl font-bold text-green-600">₹{stats.completed.toLocaleString()}</div>
+                <p className="text-xs text-muted-foreground">Successfully received</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">₹{pendingAmount.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">Waiting for payment</p>
+                <div className="text-2xl font-bold text-yellow-600">₹{stats.pending.toLocaleString()}</div>
+                <p className="text-xs text-muted-foreground">Awaiting payment</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Completed %</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {Math.round((completedDonations / donations.length) * 100)}%
-                </div>
-                <p className="text-xs text-muted-foreground">Transaction success rate</p>
+                <div className="text-2xl font-bold text-blue-600">{stats.successRate}%</div>
+                <p className="text-xs text-muted-foreground">Transaction completion</p>
               </CardContent>
             </Card>
           </div>
@@ -239,7 +167,7 @@ export default function DonationsPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Search donations..."
+                    placeholder="Search donor, email, campaign..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 w-full sm:w-64"
@@ -254,96 +182,95 @@ export default function DonationsPage() {
                   <option value="completed">Completed</option>
                   <option value="pending">Pending</option>
                   <option value="failed">Failed</option>
-                  <option value="refunded">Refunded</option>
-                </select>
-                <select
-                  value={methodFilter}
-                  onChange={(e) => setMethodFilter(e.target.value)}
-                  className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                >
-                  <option value="all">All Methods</option>
-                  <option value="Credit Card">Credit Card</option>
-                  <option value="UPI">UPI</option>
-                  <option value="Bank Transfer">Bank Transfer</option>
-                  <option value="PayPal">PayPal</option>
                 </select>
               </div>
-              <Button variant="outline">
+              <Button variant="outline" onClick={fetchDonations}>
                 <Filter className="h-4 w-4 mr-2" />
-                Advanced Filter
+                Refresh Data
               </Button>
             </div>
           </div>
 
           {/* Donations Table */}
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>All Donations</CardTitle>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Donor</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Campaign</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Receipt</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredDonations.map((donation) => (
-                    <TableRow key={donation.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{donation.donor}</div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">{donation.email}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-bold text-lg">
-                          ₹{donation.amount.toLocaleString()}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center text-sm">
-                          <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                          {new Date(donation.date).toLocaleDateString()}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">{donation.campaign}</div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={methodColors[donation.method as keyof typeof methodColors]}>
-                          {donation.method}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={statusColors[donation.status as keyof typeof statusColors]}>
-                          {donation.status.charAt(0).toUpperCase() + donation.status.slice(1)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-mono text-sm">{donation.receipt}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Donor</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Campaign</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {isLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="h-24 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Loading donations...
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : filteredDonations.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                          No donations found.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredDonations.map((donation) => (
+                        <TableRow key={donation._id}>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">{donation.firstName} {donation.lastName}</div>
+                              <div className="text-xs text-muted-foreground">{donation.email}</div>
+                              {donation.phone && <div className="text-[10px] text-muted-foreground/70">{donation.phone}</div>}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="font-bold text-primary">
+                              ₹{donation.amount.toLocaleString()}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="capitalize text-[10px] px-2 py-0">
+                              {donation.donationType}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm font-medium max-w-[150px] truncate" title={donation.campaign}>
+                              {donation.campaign}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={`${statusColors[donation.status as keyof typeof statusColors]} capitalize border-none`}>
+                              {donation.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-xs text-muted-foreground">
+                              {new Date(donation.createdAt).toLocaleDateString(undefined, {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </div>

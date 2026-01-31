@@ -15,7 +15,7 @@ export const upcomingEvents = [
         id: 2,
         title: 'Open School Inauguration',
         date: 'Feb 20, 2025',
-        location: 'Mira Road, Mumbai',
+        location: 'Bhayandar East, Mumbai',
         description:
             'Celebrate the opening of our new open school with free education for 200+ underprivileged children. Meet students, volunteers, and educators.',
         category: 'Education',
@@ -39,7 +39,7 @@ export const upcomingEvents = [
         id: 4,
         title: 'Blood Donation Camp',
         date: 'Mar 5, 2025',
-        location: 'Crystal Plaza, Mumbai',
+        location: 'New Sagar Samrat Bldg, Mumbai',
         description:
             'Save lives! Donate blood and help us reach our target of 500 units this month. Medical professionals on-site, refreshments provided.',
         category: 'Health',
@@ -111,7 +111,7 @@ export const upcomingEvents = [
         id: 10,
         title: 'Leadership Training for Young Volunteers',
         date: 'Apr 10, 2025',
-        location: 'Head Office, Mira Road',
+        location: 'Office No. 02, Bhayandar East',
         description:
             'Develop leadership and organizational skills. Learn about community development and social impact. Limited seats - Early registration recommended.',
         category: 'Training',

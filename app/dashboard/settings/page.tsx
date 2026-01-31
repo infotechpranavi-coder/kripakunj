@@ -155,7 +155,7 @@ export default function SettingsPage() {
                       <Label htmlFor="address">Address</Label>
                       <Textarea
                         id="address"
-                        defaultValue="123 Charity Lane, Mumbai, Maharashtra 400001"
+                        defaultValue="Office No. 02, New Sagar Samrat Bldg, Cabin Cross Rd, Narmada Nagar, Bhayandar East, Mumbai - 401105"
                         rows={3}
                       />
                     </div>

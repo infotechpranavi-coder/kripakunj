@@ -41,9 +41,9 @@ export default function Contact() {
       icon: '📍',
       title: 'Head Office',
       details: [
-        '4th Floor, Crystal Plaza',
-        'Deepak Hospital Rd, Ramdev Park',
-        'Mira Road East, Mumbai 401107',
+        'Office No. 02, New Sagar Samrat Bldg',
+        'Cabin Cross Rd, Narmada Nagar',
+        'Bhayandar East, Mumbai - 401105',
         'Maharashtra, India',
       ],
     },
