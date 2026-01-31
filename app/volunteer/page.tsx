@@ -1,10 +1,15 @@
+'use client'
+
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { ImageSlider } from '@/components/image-slider'
 import { VolunteerApplication } from '@/components/volunteer-application'
+import { SocialMediaFloatingIcons } from '@/components/social-media-floating-icons'
 import Link from 'next/link'
+import { useState } from 'react'
 
 export default function Volunteer() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const volunteerOpportunities = [
     {
       title: 'Education Mentor',
@@ -266,7 +271,7 @@ export default function Volunteer() {
                   </span>
                 </div>
                 <p className="text-foreground/70 mb-6 text-sm">{opportunity.description}</p>
-                
+
                 <div className="bg-white rounded-lg p-4 mb-6 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-foreground">Commitment:</span>
@@ -324,7 +329,7 @@ export default function Volunteer() {
 
       {/* Call to Action */}
       <section className="relative text-primary-foreground py-16 md:py-24 overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url('https://tse2.mm.bing.net/th/id/OIP.HLET8n_kti1aFWOfUPDqQwHaEU?rs=1&pid=ImgDetMain&o=7&rm=3')`,
@@ -345,7 +350,8 @@ export default function Volunteer() {
         </div>
       </section>
 
-      <VolunteerApplication />
+      <VolunteerApplication isOpen={isModalOpen} onOpenChange={setIsModalOpen} />
+      <SocialMediaFloatingIcons onVolunteerClick={() => setIsModalOpen(true)} />
       <Footer />
     </>
   )
