@@ -8,11 +8,13 @@ import Link from 'next/link'
 import { upcomingEvents as staticUpcomingEvents, pastEvents as staticPastEvents } from '@/lib/events-data'
 import { Button } from '@/components/ui/button'
 import EventRegistrationModal from '@/components/EventRegistrationModal'
+import { VolunteerApplication } from '@/components/volunteer-application'
 
 export default function Events() {
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
   const [pastEvents, setPastEvents] = useState<any[]>(staticPastEvents)
   const [isLoading, setIsLoading] = useState(true)
+  const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
 
   useEffect(() => {
     fetchEvents()
@@ -135,11 +137,11 @@ export default function Events() {
                   </div>
                 </Link>
                 <div className="p-6 pt-0 flex gap-3 mt-auto">
-                  <div onClick={(e) => e.stopPropagation()}>
+                  <div className="flex-1" onClick={(e) => e.stopPropagation()}>
                     <EventRegistrationModal
                       event={{ id: event.id, title: event.title }}
                       trigger={
-                        <Button className="w-full bg-gradient-to-r from-primary to-secondary text-primary-foreground">
+                        <Button className="w-full h-11 bg-gradient-to-r from-primary to-secondary text-primary-foreground font-bold">
                           Register Now
                         </Button>
                       }
@@ -147,7 +149,7 @@ export default function Events() {
                   </div>
                   <Link
                     href={`/events/${event.id}`}
-                    className="px-4 py-3 border border-primary text-primary rounded-lg font-semibold hover:bg-primary/10 transition"
+                    className="flex-1 h-11 flex items-center justify-center border border-primary text-primary rounded-lg font-bold hover:bg-primary/10 transition"
                   >
                     Details
                   </Link>
@@ -226,16 +228,20 @@ export default function Events() {
           <p className="text-lg opacity-90 mb-8 leading-relaxed">
             Every event is an opportunity to make a difference. Sign up for any event above or get in touch to volunteer!
           </p>
-          <Link
-            href="/volunteer"
-            className="inline-block px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:opacity-90 transition"
+          <button
+            onClick={() => setIsVolunteerModalOpen(true)}
+            className="inline-block px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:opacity-90 transition cursor-pointer"
           >
             Join as Volunteer
-          </Link>
+          </button>
         </div>
       </section>
 
       <Footer />
+      <VolunteerApplication
+        isOpen={isVolunteerModalOpen}
+        onOpenChange={setIsVolunteerModalOpen}
+      />
     </>
   )
 }
