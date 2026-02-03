@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { TermsModal } from './TermsModal'
+import { PrivacyPolicyModal } from './PrivacyPolicyModal'
 
 export function Footer() {
   return (
@@ -93,42 +95,39 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Programs */}
+          {/* Support Us */}
           <div>
-            <h4 className="text-lg font-semibold mb-6 pb-2 border-b border-white/20">Our Programs</h4>
+            <h4 className="text-lg font-semibold mb-6 pb-2 border-b border-white/20">Support Us</h4>
             <ul className="space-y-4">
               <li>
-                <Link href="/programs/education" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
+                <Link href="/campaigns" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
                   <span className="w-1 h-1 bg-white/30 rounded-full group-hover:bg-white/80 transition-colors duration-300"></span>
-                  <span>Education for All</span>
+                  <span>Donate Now</span>
                 </Link>
               </li>
               <li>
-                <Link href="/programs/healthcare" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
+                <Link href="/volunteer" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
                   <span className="w-1 h-1 bg-white/30 rounded-full group-hover:bg-white/80 transition-colors duration-300"></span>
-                  <span>Healthcare & Hygiene</span>
+                  <span>Volunteer</span>
                 </Link>
               </li>
               <li>
-                <Link href="/programs/environment" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
+                <Link href="/contact" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
                   <span className="w-1 h-1 bg-white/30 rounded-full group-hover:bg-white/80 transition-colors duration-300"></span>
-                  <span>Environmental Care</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/programs/women-empowerment" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
-                  <span className="w-1 h-1 bg-white/30 rounded-full group-hover:bg-white/80 transition-colors duration-300"></span>
-                  <span>Women Empowerment</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/programs/food-security" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
-                  <span className="w-1 h-1 bg-white/30 rounded-full group-hover:bg-white/80 transition-colors duration-300"></span>
-                  <span>Food Security</span>
+                  <span>Partner with Us</span>
                 </Link>
               </li>
             </ul>
           </div>
+
+          {/* Our Mission */}
+          <div>
+            <h4 className="text-lg font-semibold mb-6 pb-2 border-b border-white/20">Our Mission</h4>
+            <p className="text-sm opacity-90 leading-relaxed mb-6">
+              To empower underprivileged communities by providing quality education, accessible healthcare, and sustainable livelihood opportunities. We believe in creating a world where every individual has the chance to thrive and contribute to a better society.
+            </p>
+          </div>
+
 
           {/* Newsletter & Social */}
           <div>
@@ -196,41 +195,17 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Newsletter */}
-            <div>
-              <h5 className="text-sm font-medium mb-4 opacity-90">Newsletter</h5>
-              <div className="flex flex-col gap-3">
-                <p className="text-xs opacity-80">Subscribe to our newsletter for updates and news.</p>
-                <div className="flex">
-                  <input
-                    type="email"
-                    placeholder="Your email"
-                    className="flex-1 px-4 py-2 text-primary-foreground bg-white/10 border border-white/20 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-white/30"
-                  />
-                  <button className="bg-white text-primary px-4 py-2 rounded-r-lg font-medium hover:bg-gray-100 transition-colors">
-                    Join
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm opacity-80 mb-4 md:mb-0">
             &copy; 2025 Kripa Kunj Charitable Trust. All rights reserved.
           </p>
           <div className="flex flex-wrap gap-6 justify-center">
-            <Link href="/privacy-policy" className="text-sm opacity-80 hover:opacity-100 transition-opacity">
-              Privacy Policy
-            </Link>
-            <Link href="/terms-conditions" className="text-sm opacity-80 hover:opacity-100 transition-opacity">
-              Terms & Conditions
-            </Link>
-            <Link href="/sitemap" className="text-sm opacity-80 hover:opacity-100 transition-opacity">
-              Sitemap
-            </Link>
+            <PrivacyPolicyModal />
+            <TermsModal />
+
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import {
     Edit,
+    Plus,
     Save,
     Upload,
     X
@@ -75,6 +76,61 @@ export default function EditCampaignModal({ campaign, onUpdate }: EditCampaignMo
             impactDescription: campaign.impactDescription || ""
         }
     })
+
+    const [categories, setCategories] = useState([
+        { value: 'education', label: 'Education' },
+        { value: 'health', label: 'Health' },
+        { value: 'environment', label: 'Environment' },
+        { value: 'social-welfare', label: 'Social Welfare' },
+        { value: 'technology', label: 'Technology' },
+    ])
+    const [isAddingCategory, setIsAddingCategory] = useState(false)
+    const [newCategory, setNewCategory] = useState('')
+
+    useEffect(() => {
+        const fetchExistingCategories = async () => {
+            try {
+                const response = await fetch('/api/campaigns')
+                const result = await response.json()
+                if (result.success) {
+                    const existingCats = Array.from(new Set(result.data.map((c: any) => c.category).filter(Boolean)))
+                    const newOptions = existingCats.map(cat => ({
+                        value: String(cat).toLowerCase().replace(/[^a-z0-9]/g, '-'),
+                        label: String(cat).split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+                    }))
+
+                    setCategories(prev => {
+                        const merged = [...prev]
+                        newOptions.forEach(opt => {
+                            if (!merged.find(m => m.value === opt.value)) {
+                                merged.push(opt)
+                            }
+                        })
+                        return merged
+                    })
+                }
+            } catch (error) {
+                console.error('Failed to fetch categories:', error)
+            }
+        }
+        fetchExistingCategories()
+    }, [])
+
+    const handleAddCategory = () => {
+        if (!newCategory.trim()) {
+            setIsAddingCategory(false)
+            return
+        }
+
+        const value = newCategory.toLowerCase().replace(/[^a-z0-9]/g, '-')
+        const newCat = { value, label: newCategory.trim() }
+
+        setCategories([...categories, newCat])
+        handleSectionChange('campaignDetails', 'category', value)
+        setNewCategory('')
+        setIsAddingCategory(false)
+        toast.success(`Category "${newCat.label}" added`)
+    }
 
     const handleSectionChange = (section: keyof typeof formData, field: string, value: any) => {
         setFormData(prev => ({
@@ -328,20 +384,62 @@ export default function EditCampaignModal({ campaign, onUpdate }: EditCampaignMo
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Category</Label>
-                                        <Select
-                                            value={formData.campaignDetails.category}
-                                            onValueChange={(val) => handleSectionChange('campaignDetails', 'category', val)}
-                                        >
-                                            <SelectTrigger><SelectValue /></SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="education">Education</SelectItem>
-                                                <SelectItem value="health">Health</SelectItem>
-                                                <SelectItem value="environment">Environment</SelectItem>
-                                                <SelectItem value="social-welfare">Social Welfare</SelectItem>
-                                                <SelectItem value="technology">Technology</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="category">Campaign Category</Label>
+                                            {!isAddingCategory && (
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-6 px-2 text-xs text-primary"
+                                                    onClick={() => setIsAddingCategory(true)}
+                                                >
+                                                    <Plus className="h-3 w-3 mr-1" /> New Category
+                                                </Button>
+                                            )}
+                                        </div>
+
+                                        {isAddingCategory ? (
+                                            <div className="flex gap-2">
+                                                <Input
+                                                    value={newCategory}
+                                                    onChange={(e) => setNewCategory(e.target.value)}
+                                                    placeholder="Enter category name"
+                                                    className="h-10"
+                                                    autoFocus
+                                                />
+                                                <Button type="button" size="sm" onClick={handleAddCategory}>
+                                                    Add
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setIsAddingCategory(false)
+                                                        setNewCategory('')
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <Select
+                                                value={formData.campaignDetails.category}
+                                                onValueChange={(val) => handleSectionChange('campaignDetails', 'category', val)}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a category" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {categories.map((cat) => (
+                                                        <SelectItem key={cat.value} value={cat.value}>
+                                                            {cat.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        )}
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Status</Label>

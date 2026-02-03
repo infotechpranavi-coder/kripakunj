@@ -43,6 +43,36 @@ export default function CreateCampaignModal() {
     const [isAddingCategory, setIsAddingCategory] = useState(false)
     const [newCategory, setNewCategory] = useState('')
 
+    React.useEffect(() => {
+        const fetchExistingCategories = async () => {
+            try {
+                const response = await fetch('/api/campaigns')
+                const result = await response.json()
+                if (result.success) {
+                    const existingCats = Array.from(new Set(result.data.map((c: any) => c.category).filter(Boolean)))
+                    const newOptions = existingCats.map(cat => ({
+                        value: String(cat).toLowerCase().replace(/[^a-z0-9]/g, '-'),
+                        label: String(cat).split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+                    }))
+
+                    // Merge with defaults, avoiding duplicates
+                    setCategories(prev => {
+                        const merged = [...prev]
+                        newOptions.forEach(opt => {
+                            if (!merged.find(m => m.value === opt.value)) {
+                                merged.push(opt)
+                            }
+                        })
+                        return merged
+                    })
+                }
+            } catch (error) {
+                console.error('Failed to fetch categories:', error)
+            }
+        }
+        fetchExistingCategories()
+    }, [])
+
     const handleAddCategory = () => {
         if (!newCategory.trim()) {
             setIsAddingCategory(false)

@@ -16,7 +16,8 @@ import {
     Megaphone,
     FileCheck,
     Menu,
-    LogOut
+    LogOut,
+    Layout
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePathname, useRouter } from 'next/navigation'
@@ -52,9 +53,11 @@ export default function AdminSidebar({ sidebarOpen, toggleSidebar }: AdminSideba
         { name: 'Team Members', icon: Briefcase, href: '/dashboard/team' },
         { name: 'Board Members', icon: UserCheck, href: '/dashboard/board' },
         { name: 'Gallery', icon: ImageIcon, href: '/dashboard/gallery' },
+        { name: 'Banners', icon: ImageIcon, href: '/dashboard/banners' },
         { name: 'Videos', icon: Video, href: '/dashboard/videos' },
         { name: 'Press Release', icon: Megaphone, href: '/dashboard/press' },
         { name: 'Compliance', icon: FileCheck, href: '/dashboard/compliance' },
+        { name: 'Other', icon: Layout, href: '/dashboard/other' },
         { name: 'Settings', icon: Settings, href: '/dashboard/settings' },
     ]
 

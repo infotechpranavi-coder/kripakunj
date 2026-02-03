@@ -6,6 +6,8 @@ import { Footer } from '@/components/footer'
 import { HeroSlider } from '@/components/hero-slider'
 import Link from 'next/link'
 import { upcomingEvents as staticUpcomingEvents, pastEvents as staticPastEvents } from '@/lib/events-data'
+import { Button } from '@/components/ui/button'
+import EventRegistrationModal from '@/components/EventRegistrationModal'
 
 export default function Events() {
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
@@ -91,64 +93,64 @@ export default function Events() {
             {upcomingEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col"
+                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col cursor-pointer"
               >
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
-                  <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary rounded-full text-xs font-semibold whitespace-nowrap">
-                      {event.category}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6 flex-grow">
-                  <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-4">{event.title}</h3>
-                  <div className="space-y-3 mb-4 text-foreground/70">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-primary text-sm">📅</span>
-                      </div>
-                      <span className="text-sm">{event.date}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-primary text-sm">🕐</span>
-                      </div>
-                      <span className="text-sm">{event.time}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-primary text-sm">📍</span>
-                      </div>
-                      <span className="text-sm">{event.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-accent text-sm">👥</span>
-                      </div>
-                      <span className="text-sm">{event.interested} Interested</span>
+                <Link href={`/events/${event.id}`} className="flex-grow">
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
+                    <div className="absolute top-4 right-4">
+                      <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary rounded-full text-xs font-semibold whitespace-nowrap">
+                        {event.category}
+                      </span>
                     </div>
                   </div>
-                  <p className="text-foreground/70 mb-6 text-sm leading-relaxed line-clamp-3">{event.description}</p>
-                  <div className="flex gap-3 mt-auto">
-                    <Link
-                      href="/contact"
-                      className="flex-1 text-center px-4 py-3 bg-gradient-to-r from-primary to-secondary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition"
-                    >
-                      Register Now
-                    </Link>
-                    <Link
-                      href={`/events/${event.id}`}
-                      className="px-4 py-3 border border-primary text-primary rounded-lg font-semibold hover:bg-primary/10 transition"
-                    >
-                      Details
-                    </Link>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-4">{event.title}</h3>
+                    <div className="space-y-3 mb-4 text-foreground/70">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-primary text-sm">📅</span>
+                        </div>
+                        <span className="text-sm">{event.date}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-primary text-sm">🕐</span>
+                        </div>
+                        <span className="text-sm">{event.time}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-primary text-sm">📍</span>
+                        </div>
+                        <span className="text-sm">{event.location}</span>
+                      </div>
+                    </div>
+                    <p className="text-foreground/70 mb-6 text-sm leading-relaxed line-clamp-3">{event.description}</p>
                   </div>
+                </Link>
+                <div className="p-6 pt-0 flex gap-3 mt-auto">
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <EventRegistrationModal
+                      event={{ id: event.id, title: event.title }}
+                      trigger={
+                        <Button className="w-full bg-gradient-to-r from-primary to-secondary text-primary-foreground">
+                          Register Now
+                        </Button>
+                      }
+                    />
+                  </div>
+                  <Link
+                    href={`/events/${event.id}`}
+                    className="px-4 py-3 border border-primary text-primary rounded-lg font-semibold hover:bg-primary/10 transition"
+                  >
+                    Details
+                  </Link>
                 </div>
               </div>
             ))}

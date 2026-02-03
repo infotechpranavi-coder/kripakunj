@@ -11,6 +11,7 @@ interface HeroSlide {
   title: string
   subtitle?: string
   description?: string
+  link?: string
 }
 
 interface HeroSliderProps {
@@ -102,6 +103,14 @@ export function HeroSlider({
                     >
                       Donate Now
                     </button>
+                    {slide.link && (
+                      <Link
+                        href={slide.link}
+                        className="px-8 py-3 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition text-center inline-block"
+                      >
+                        Learn More
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>

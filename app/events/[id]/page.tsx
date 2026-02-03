@@ -11,6 +11,7 @@ import { Calendar, MapPin, Clock, Users, Heart, Share2, ArrowLeft, CheckCircle2 
 import Link from 'next/link'
 import Image from 'next/image'
 import { upcomingEvents } from '@/lib/events-data'
+import EventRegistrationModal from '@/components/EventRegistrationModal'
 
 export default function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const unwrappedParams = React.use(params)
@@ -228,9 +229,14 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                                             </div>
                                         </div>
 
-                                        <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white h-12 text-lg font-bold shadow-lg">
-                                            <Link href="/contact">Register for Event</Link>
-                                        </Button>
+                                        <EventRegistrationModal
+                                            event={{ id: event.id, title: event.title }}
+                                            trigger={
+                                                <Button className="w-full bg-primary hover:bg-primary/90 text-white h-12 text-lg font-bold shadow-lg">
+                                                    Register for Event
+                                                </Button>
+                                            }
+                                        />
 
                                         <p className="text-xs text-center text-gray-500">
                                             Standard registration applies. For bulk or group registrations, please contact us.

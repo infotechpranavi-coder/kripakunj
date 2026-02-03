@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { AnimatedSection } from '@/components/animated-section'
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import Link from 'next/link'
+import { DonationModal } from '@/components/donation-modal'
 
 const campaigns = [
   {
@@ -96,6 +98,8 @@ export default function CampaignsPage() {
   const [dbCampaigns, setDbCampaigns] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState('all')
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -118,7 +122,12 @@ export default function CampaignsPage() {
     ? dbCampaigns
     : dbCampaigns.filter(campaign => campaign.category?.toLowerCase() === activeFilter)
 
-  const categories = ['all', 'education', 'environment', 'community', 'health', 'social-welfare', 'technology']
+  const categories = ['all', ...Array.from(new Set(dbCampaigns.map(campaign => campaign.category?.toLowerCase()).filter(Boolean)))]
+
+  const formatCategory = (cat: string) => {
+    if (cat === 'all') return 'All';
+    return cat.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  }
 
   return (
     <>
@@ -140,11 +149,13 @@ export default function CampaignsPage() {
                 Be part of meaningful initiatives that create lasting impact in education, environment, healthcare, and community development. Every contribution matters.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg">
-                  <Link href="/contact">Start a Campaign</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-primary/20 px-8 py-6 text-lg">
-                  <Link href="/contact">Donate Now</Link>
+
+                <Button
+                  onClick={() => setIsDonationModalOpen(true)}
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg cursor-pointer shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                >
+                  Donate Now
                 </Button>
               </div>
             </div>
@@ -152,37 +163,6 @@ export default function CampaignsPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="bg-white py-16 md:py-24 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <AnimatedSection direction="up" delay={100} className="h-full">
-              <div className="bg-linear-to-br from-accent/10 to-accent/5 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border border-accent/20">
-                <AnimatedNumber value="24" className="text-3xl md:text-4xl font-bold text-primary mb-2" />
-                <p className="text-foreground/70 font-medium">Active Campaigns</p>
-              </div>
-            </AnimatedSection>
-            <AnimatedSection direction="up" delay={200} className="h-full">
-              <div className="bg-linear-to-br from-secondary/10 to-secondary/5 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-700 ease-in-out transform hover:-translate-y-2 hover:scale-105 border border-secondary/20">
-                <AnimatedNumber value="12K+" className="text-3xl md:text-4xl font-bold text-secondary mb-2" />
-                <p className="text-foreground/70 font-medium">Supporters</p>
-              </div>
-            </AnimatedSection>
-            <AnimatedSection direction="up" delay={300} className="h-full">
-              <div className="bg-linear-to-br from-primary/10 to-primary/5 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-700 ease-in-out transform hover:-translate-y-2 hover:scale-105 border border-primary/20">
-                <AnimatedNumber value="₹24M+" className="text-3xl md:text-4xl font-bold text-primary mb-2" />
-                <p className="text-foreground/70 font-medium">Funds Raised</p>
-              </div>
-            </AnimatedSection>
-            <AnimatedSection direction="up" delay={400} className="h-full">
-              <div className="bg-linear-to-br from-accent/10 to-accent/5 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-700 ease-in-out transform hover:-translate-y-2 hover:scale-105 border border-accent/20">
-                <AnimatedNumber value="180+" className="text-3xl md:text-4xl font-bold text-accent mb-2" />
-                <p className="text-foreground/70 font-medium">Success Stories</p>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
 
       {/* Campaigns Filter */}
       <section className="bg-gray-50 py-12">
@@ -195,7 +175,7 @@ export default function CampaignsPage() {
                 onClick={() => setActiveFilter(category)}
                 className={activeFilter === category ? "bg-primary hover:bg-primary/90" : "border-primary/20"}
               >
-                {category.charAt(0).toUpperCase() + category.slice(1)}
+                {formatCategory(category)}
               </Button>
             ))}
           </div>
@@ -221,7 +201,10 @@ export default function CampaignsPage() {
               <div className="col-span-full text-center py-20 text-foreground/50">No campaigns found in this category.</div>
             ) : filteredCampaigns.map((campaign, index) => (
               <AnimatedSection key={campaign._id || campaign.id} direction="up" delay={index * 100}>
-                <Card className="overflow-hidden hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-b from-white to-gray-50 h-full flex flex-col">
+                <Card
+                  className="overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-b from-white to-gray-50 h-full flex flex-col cursor-pointer group"
+                  onClick={() => router.push(`/campaign/${campaign._id || campaign.id}`)}
+                >
                   {campaign.featured && (
                     <div className="absolute top-4 right-4 z-10">
                       <Badge className="bg-primary text-primary-foreground">Featured</Badge>
@@ -292,9 +275,7 @@ export default function CampaignsPage() {
               Have a cause you're passionate about? Create your own campaign and mobilize support for your initiative.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 px-8 py-6 text-lg">
-                <Link href="/contact">Create Campaign</Link>
-              </Button>
+
               <Button asChild size="lg" variant="secondary" className="bg-transparent border-2 border-white/30 text-white hover:bg-white/10 px-8 py-6 text-lg">
                 <Link href="/contact">Contact Us</Link>
               </Button>
@@ -304,6 +285,12 @@ export default function CampaignsPage() {
       </section>
 
       <Footer />
+
+      <DonationModal
+        isOpen={isDonationModalOpen}
+        onOpenChange={setIsDonationModalOpen}
+        campaignTitle="General Donation (Campaigns Page Hero)"
+      />
     </>
   )
 }

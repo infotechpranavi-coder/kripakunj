@@ -9,6 +9,8 @@ import { AnimatedSection } from '@/components/animated-section'
 import { AnimatedNumber } from '@/components/animated-number'
 import { SocialMediaFloatingIcons } from '@/components/social-media-floating-icons'
 import { TestimonialCarousel } from '@/components/testimonial-carousel'
+import { InitiativesCarousel } from '@/components/initiatives-carousel'
+import { CollaboratorsSection } from '@/components/collaborators-section'
 import Image from 'next/image'
 import Link from 'next/link'
 import { VolunteerApplication } from '@/components/volunteer-application'
@@ -16,6 +18,8 @@ import { VolunteerApplication } from '@/components/volunteer-application'
 export default function Home() {
   const [dbCampaigns, setDbCampaigns] = useState<any[]>([])
   const [dbEvents, setDbEvents] = useState<any[]>([])
+  const [dbBanners, setDbBanners] = useState<any[]>([])
+  const [dbImpactStats, setDbImpactStats] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
 
@@ -44,38 +48,106 @@ export default function Home() {
       }
     }
 
+    const fetchImpactStats = async () => {
+      try {
+        const response = await fetch('/api/impact-stats')
+        const result = await response.json()
+        if (result.success) {
+          setDbImpactStats(result.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch impact stats:', error)
+      }
+    }
+
+    const fetchBanners = async () => {
+      try {
+        const response = await fetch('/api/banners')
+        const result = await response.json()
+        if (result.success) {
+          setDbBanners(result.data.filter((b: any) => b.isActive))
+        }
+      } catch (error) {
+        console.error('Failed to fetch banners:', error)
+      }
+    }
+
     const loadData = async () => {
       setIsLoading(true)
-      await Promise.all([fetchCampaigns(), fetchEvents()])
+      await Promise.all([fetchCampaigns(), fetchEvents(), fetchBanners(), fetchImpactStats()])
       setIsLoading(false)
     }
 
     loadData()
   }, [])
 
-  const heroSlides = [
-    {
-      src: '/slider-education.jpg',
-      alt: 'Children learning in classroom',
-      title: 'Serving Beyond Humanity',
-      subtitle: 'Quality Education for All',
-      description: 'Kripa Kunj Charitable Trust is dedicated to making a difference in the lives of underprivileged communities through education, healthcare, and sustainable development initiatives.',
-    },
-    {
-      src: '/slider-community.jpg',
-      alt: 'Community volunteers helping',
-      title: 'Empowering Communities',
-      subtitle: 'Together We Make a Difference',
-      description: 'Join us in creating positive change through community-driven initiatives that impact thousands of lives across India.',
-    },
-    {
-      src: '/slider-environment.jpg',
-      alt: 'Environmental conservation',
-      title: 'Protecting Our Planet',
-      subtitle: 'Environmental Care & Conservation',
-      description: 'Tree plantation, beach cleaning drives, and raising awareness about waste management. Monthly Kinaara beach cleanups with community participation.',
-    },
-  ]
+  const heroSlides = dbBanners.length > 0
+    ? dbBanners.flatMap(b => {
+      const slides = [];
+
+      // Add direct URL if present
+      if (b.imageUrl) {
+        slides.push({
+          src: b.imageUrl,
+          alt: b.alt || b.title,
+          title: b.title,
+          subtitle: b.subtitle,
+          description: b.description,
+          link: b.link,
+        });
+      }
+
+      // Add uploaded images
+      if (b.images && b.images.length > 0) {
+        b.images.forEach((img: string) => {
+          slides.push({
+            src: img,
+            alt: b.alt || b.title,
+            title: b.title,
+            subtitle: b.subtitle,
+            description: b.description,
+            link: b.link,
+          });
+        });
+      }
+
+      // Legacy support
+      if (!b.imageUrl && (!b.images || b.images.length === 0) && b.image) {
+        slides.push({
+          src: b.image,
+          alt: b.alt || b.title,
+          title: b.title,
+          subtitle: b.subtitle,
+          description: b.description,
+          link: b.link,
+        });
+      }
+
+      return slides;
+    })
+    : [
+      {
+        src: '/slider-education.jpg',
+        alt: 'Children learning in classroom',
+        title: 'Serving Beyond Humanity',
+        subtitle: 'Quality Education for All',
+        description: 'Kripa Kunj Charitable Trust is dedicated to making a difference in the lives of underprivileged communities through education, healthcare, and sustainable development initiatives.',
+      },
+      {
+        src: '/slider-community.jpg',
+        alt: 'Community volunteers helping',
+        title: 'Empowering Communities',
+        subtitle: 'Together We Make a Difference',
+        description: 'Join us in creating positive change through community-driven initiatives that impact thousands of lives across India.',
+      },
+      {
+        src: '/slider-environment.jpg',
+        alt: 'Environmental conservation',
+        title: 'Protecting Our Planet',
+        subtitle: 'Environmental Care & Conservation',
+        description: 'Tree plantation, beach cleaning drives, and raising awareness about waste management. Monthly Kinaara beach cleanups with community participation.',
+      },
+    ]
 
   // Map DB campaigns to Slider format
   const mappedCampaigns = dbCampaigns.map(c => ({
@@ -174,30 +246,28 @@ export default function Home() {
             </h2>
           </AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <AnimatedSection direction="up" delay={100} className="h-full">
-              <div className="bg-linear-to-br from-accent/10 to-accent/5 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border border-accent/20">
-                <AnimatedNumber value="9" className="text-3xl md:text-4xl font-bold text-primary mb-2" />
-                <p className="text-foreground/70 font-medium">Cities Covered</p>
-              </div>
-            </AnimatedSection>
-            <AnimatedSection direction="up" delay={200} className="h-full">
-              <div className="bg-linear-to-br from-secondary/10 to-secondary/5 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-700 ease-in-out transform hover:-translate-y-2 hover:scale-105 border border-secondary/20">
-                <AnimatedNumber value="1100+" className="text-3xl md:text-4xl font-bold text-secondary mb-2" />
-                <p className="text-foreground/70 font-medium">Active Volunteers</p>
-              </div>
-            </AnimatedSection>
-            <AnimatedSection direction="up" delay={300} className="h-full">
-              <div className="bg-linear-to-br from-primary/10 to-primary/5 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-700 ease-in-out transform hover:-translate-y-2 hover:scale-105 border border-primary/20">
-                <AnimatedNumber value="65K+" className="text-3xl md:text-4xl font-bold text-primary mb-2" />
-                <p className="text-foreground/70 font-medium">Trees Planted</p>
-              </div>
-            </AnimatedSection>
-            <AnimatedSection direction="up" delay={400} className="h-full">
-              <div className="bg-linear-to-br from-accent/10 to-accent/5 rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-700 ease-in-out transform hover:-translate-y-2 hover:scale-105 border border-accent/20">
-                <AnimatedNumber value="20Cr+" className="text-3xl md:text-4xl font-bold text-accent mb-2" />
-                <p className="text-foreground/70 font-medium">Funds Raised</p>
-              </div>
-            </AnimatedSection>
+            {(dbImpactStats.length > 0 ? dbImpactStats : [
+              { label: 'Cities Covered', value: '9', color: 'accent' },
+              { label: 'Active Volunteers', value: '1100+', color: 'secondary' },
+              { label: 'Trees Planted', value: '65K+', color: 'primary' },
+              { label: 'Funds Raised', value: '20Cr+', color: 'accent' }
+            ]).map((stat, index) => (
+              <AnimatedSection key={index} direction="up" delay={(index + 1) * 100} className="h-full">
+                <div className={`rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border ${stat.color === 'secondary' ? 'bg-linear-to-br from-secondary/10 to-secondary/5 border-secondary/20' :
+                    stat.color === 'accent' ? 'bg-linear-to-br from-accent/10 to-accent/5 border-accent/20' :
+                      'bg-linear-to-br from-primary/10 to-primary/5 border-primary/20'
+                  }`}>
+                  <AnimatedNumber
+                    value={stat.value}
+                    className={`text-3xl md:text-4xl font-bold mb-2 ${stat.color === 'secondary' ? 'text-secondary' :
+                        stat.color === 'accent' ? 'text-accent' :
+                          'text-primary'
+                      }`}
+                  />
+                  <p className="text-foreground/70 font-medium">{stat.label}</p>
+                </div>
+              </AnimatedSection>
+            ))}
           </div>
         </div>
       </section>
@@ -237,39 +307,37 @@ export default function Home() {
           </AnimatedSection>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {(dbEvents.length > 0
-              ? dbEvents.filter(e => e.status === 'completed').slice(0, 3).map(e => ({
-                title: e.title,
-                category: e.category,
-                image: e.image,
-              }))
-              : [
-                {
-                  title: 'URBAN ROOTS: MIYAWAKI FOREST PLANTED IN BHIWANDI',
-                  category: 'Shoonya',
-                  image: '/slider-environment.jpg',
-                },
-                {
-                  title: 'A DAY TO REMEMBER: INCLUSIVE PICNIC WITH HELEN',
-                  category: 'Gyan Daan',
-                  image: '/slider-education.jpg',
-                },
-                {
-                  title: 'SPARKING CHANGE: COMMUNITY SUPPORT',
-                  category: 'Gyan Daan',
-                  image: '/slider-community.jpg',
-                },
-              ]).map((event, index) => (
-                <AnimatedSection
-                  key={index}
-                  direction="up"
-                  delay={index * 100}
-                  className="h-full"
-                >
-                  <div className="group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-in-out transform hover:-translate-y-2 overflow-hidden border border-gray-100 h-full flex flex-col">
+            {(dbEvents.length > 0 ? dbEvents : [
+              {
+                id: '1',
+                title: 'URBAN ROOTS: MIYAWAKI FOREST PLANTED IN BHIWANDI',
+                category: 'Shoonya',
+                image: '/slider-environment.jpg',
+              },
+              {
+                id: '2',
+                title: 'A DAY TO REMEMBER: INCLUSIVE PICNIC WITH HELEN',
+                category: 'Gyan Daan',
+                image: '/slider-education.jpg',
+              },
+              {
+                id: '3',
+                title: 'SPARKING CHANGE: COMMUNITY SUPPORT',
+                category: 'Gyan Daan',
+                image: '/slider-community.jpg',
+              },
+            ]).slice(0, 3).map((event, index) => (
+              <AnimatedSection
+                key={index}
+                direction="up"
+                delay={index * 100}
+                className="h-full"
+              >
+                <Link href={`/events/${event._id || event.id}`} className="block h-full group">
+                  <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-in-out transform hover:-translate-y-2 overflow-hidden border border-gray-100 h-full flex flex-col">
                     <div className="relative w-full h-48 md:h-56 overflow-hidden">
                       <Image
-                        src={event.image}
+                        src={event.image || '/placeholder.svg'}
                         alt={event.title}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -285,8 +353,9 @@ export default function Home() {
                       </h3>
                     </div>
                   </div>
-                </AnimatedSection>
-              ))}
+                </Link>
+              </AnimatedSection>
+            ))}
           </div>
 
           <AnimatedSection direction="fade" className="text-center">
@@ -391,34 +460,19 @@ export default function Home() {
               Our <span className="text-primary">Latest Initiatives</span>
             </h2>
           </AnimatedSection>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="mt-8">
             {isLoading ? (
-              <div className="col-span-full h-64 flex items-center justify-center text-foreground/50">Loading initiatives...</div>
-            ) : initiatives.map((initiative, index) => (
-              <AnimatedSection
-                key={index}
-                direction="up"
-                delay={index * 100}
-                className="h-full"
-              >
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 ease-in-out transform hover:-translate-y-2 border border-gray-100 h-full flex flex-col relative">
-                  <div className="relative h-54 overflow-hidden">
-                    <img
-                      src={initiative.image}
-                      alt={initiative.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-                      <h3 className="text-lg font-bold text-white mb-1 group-hover:text-primary transition-colors duration-300">
-                        {initiative.name}
-                      </h3>
-                      <p className="text-white/90 font-semibold text-sm mb-3">{initiative.focus}</p>
-                      <p className="text-white/80 text-sm leading-relaxed line-clamp-2">{initiative.description}</p>
-                    </div>
-                  </div>
+              <div className="h-64 flex items-center justify-center text-foreground/50 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                  <p className="font-medium">Loading initiatives...</p>
                 </div>
+              </div>
+            ) : (
+              <AnimatedSection direction="up" delay={100}>
+                <InitiativesCarousel initiatives={initiatives} />
               </AnimatedSection>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -485,6 +539,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <CollaboratorsSection />
 
       {/* Call to Action */}
       <section className="relative text-primary-foreground py-16 md:py-24 overflow-hidden">

@@ -334,10 +334,9 @@ export default function CampaignsPage() {
                   className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="all">All Categories</option>
-                  <option value="Education">Education</option>
-                  <option value="Environment">Environment</option>
-                  <option value="Community">Community</option>
-                  <option value="Healthcare">Healthcare</option>
+                  {Array.from(new Set(dbCampaigns.map(c => c.category).filter(Boolean))).map(cat => (
+                    <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                  ))}
                 </select>
               </div>
               <Button variant="outline">

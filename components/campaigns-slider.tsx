@@ -208,16 +208,12 @@ export function CampaignsSlider({
 
                     {/* Donate Button - Orange */}
                     <div className="px-4 pb-4 bg-white">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          handleDonate(campaign)
-                        }}
-                        className="group/btn relative w-full bg-orange-500 text-white text-center py-2 px-3 rounded-lg font-bold text-xs md:text-sm hover:bg-orange-600 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg active:scale-100 z-30"
+                      <Link
+                        href={`/campaign/${campaign.id}?donate=true`}
+                        className="group/btn relative block w-full bg-orange-500 text-white text-center py-2 px-3 rounded-lg font-bold text-xs md:text-sm hover:bg-orange-600 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg active:scale-100 z-30"
                       >
                         <span className="relative z-10">DONATE</span>
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

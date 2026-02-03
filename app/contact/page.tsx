@@ -16,6 +16,7 @@ import {
   Twitter,
   Facebook,
   Linkedin,
+  Youtube,
   MessageSquare,
   Send,
   Sparkles,
@@ -30,6 +31,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { DonationModal } from '@/components/donation-modal'
+import { VolunteerApplication } from '@/components/volunteer-application'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -41,6 +44,8 @@ export default function Contact() {
   })
 
   const [submitted, setSubmitted] = useState(false)
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
+  const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -96,9 +101,9 @@ export default function Contact() {
       icon: <Phone className="w-8 h-8 text-accent" />,
       title: 'Phone Lines',
       details: [
-        'Toll Free: 1800-309-3337',
+        'Mobile: +91 98198 87551',
         'Office: +91 22-2821-5555',
-        'WhatsApp: +91 9930-559-889',
+        'WhatsApp: +91 98198 87551',
       ],
       color: 'from-orange-500/10 to-yellow-500/10',
     },
@@ -106,9 +111,8 @@ export default function Contact() {
       icon: <Mail className="w-8 h-8 text-primary" />,
       title: 'Email',
       details: [
-        'help@kripakunjngo.org',
+        'kripakunjcharitabletrust@gmail.com',
         'info@kripakunjngo.org',
-        'volunteer@kripakunjngo.org',
       ],
       color: 'from-blue-500/10 to-indigo-500/10',
     },
@@ -336,16 +340,19 @@ export default function Contact() {
                   <p className="text-sm text-foreground/70 font-medium mb-8">
                     Follow us on social media for daily updates on our initiatives and upcoming events.
                   </p>
-                  <div className="flex gap-4">
+                  <div className="flex flex-wrap gap-4">
                     {[
-                      { icon: <Facebook className="w-5 h-5" />, href: '#' },
-                      { icon: <Instagram className="w-5 h-5" />, href: '#' },
-                      { icon: <Twitter className="w-5 h-5" />, href: '#' },
-                      { icon: <Linkedin className="w-5 h-5" />, href: '#' }
+                      { icon: <Facebook className="w-5 h-5" />, href: 'https://www.facebook.com/kripakunjtrust' },
+                      { icon: <Instagram className="w-5 h-5" />, href: 'https://www.instagram.com/kripakunjtrust' },
+                      { icon: <Twitter className="w-5 h-5" />, href: 'https://x.com/kripakunjtrust' },
+                      { icon: <Linkedin className="w-5 h-5" />, href: 'https://www.linkedin.com/in/kripakunjtrust' },
+                      { icon: <Youtube className="w-5 h-5" />, href: 'https://youtube.com/@kripakunjtrust' }
                     ].map((social, i) => (
                       <a
                         key={i}
                         href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-foreground/60 hover:bg-accent hover:text-white shadow-sm transition-all"
                       >
                         {social.icon}
@@ -387,7 +394,7 @@ export default function Contact() {
               },
               {
                 q: 'Can corporate organizations partner with us?',
-                a: 'Absolutely! We welcome corporate partnerships for CSR initiatives. Please contact our partnership team at info@kripakunjngo.org to discuss collaboration opportunities.',
+                a: 'Absolutely! We welcome corporate partnerships for CSR initiatives. Please contact our partnership team at kripakunjcharitabletrust@gmail.com to discuss collaboration opportunities.',
               },
               {
                 q: 'What should I bring to volunteer events?',
@@ -428,16 +435,36 @@ export default function Contact() {
               Join thousands of supporters who are transforming lives and creating lasting change in communities across India. Every contribution counts.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold text-lg shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95" asChild>
-                <a href="/campaigns">Donate Now</a>
+              <Button
+                size="lg"
+                className="h-16 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold text-lg shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                onClick={() => setIsDonationModalOpen(true)}
+              >
+                Donate Now
               </Button>
-              <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-2 border-primary/20 hover:border-primary hover:bg-primary/5 text-primary font-bold text-lg transition-all hover:scale-105 active:scale-95" asChild>
-                <a href="/volunteer">Volunteer With Us</a>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-16 px-10 rounded-2xl border-2 border-primary/20 hover:border-primary hover:bg-primary/5 text-primary font-bold text-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                onClick={() => setIsVolunteerModalOpen(true)}
+              >
+                Volunteer With Us
               </Button>
             </div>
           </AnimatedSection>
         </div>
       </section>
+
+      <DonationModal
+        isOpen={isDonationModalOpen}
+        onOpenChange={setIsDonationModalOpen}
+        campaignTitle="General Donation (Contact Page)"
+      />
+
+      <VolunteerApplication
+        isOpen={isVolunteerModalOpen}
+        onOpenChange={setIsVolunteerModalOpen}
+      />
 
       <Footer />
     </>

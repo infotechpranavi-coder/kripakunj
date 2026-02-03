@@ -10,20 +10,34 @@ import Image from 'next/image'
 
 export default function About() {
   const [team, setTeam] = useState<any[]>([])
+  const [board, setBoard] = useState<any[]>([])
+  const [programs, setPrograms] = useState<any[]>([])
+  const [trackRecords, setTrackRecords] = useState<any[]>([])
 
   useEffect(() => {
-    const fetchTeam = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/team')
-        const result = await response.json()
-        if (result.success) {
-          setTeam(result.data)
-        }
+        const [teamRes, boardRes, programsRes, trackRes] = await Promise.all([
+          fetch('/api/team'),
+          fetch('/api/board'),
+          fetch('/api/programs'),
+          fetch('/api/track-records')
+        ])
+
+        const teamResult = await teamRes.json()
+        const boardResult = await boardRes.json()
+        const programsResult = await programsRes.json()
+        const trackResult = await trackRes.json()
+
+        if (teamResult.success) setTeam(teamResult.data)
+        if (boardResult.success) setBoard(boardResult.data)
+        if (programsResult.success) setPrograms(programsResult.data)
+        if (trackResult.success) setTrackRecords(trackResult.data)
       } catch (error) {
-        console.error('Failed to fetch team:', error)
+        console.error('Failed to fetch data:', error)
       }
     }
-    fetchTeam()
+    fetchData()
   }, [])
 
   const heroSlides = [
@@ -120,86 +134,31 @@ export default function About() {
             </h2>
           </AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                name: 'Project GyanDaan',
-                tagline: 'Education for All',
-                description:
-                  'Providing free education through our open schools all over India, sponsoring children\'s schooling and school supplies, and fighting illiteracy together.',
-                stats: '400+ kids educating',
-                icon: '📚',
-                color: 'from-blue-500/10 to-cyan-500/10',
-                borderColor: 'border-blue-200',
-              },
-              {
-                name: 'Project Lajja',
-                tagline: '#MenstruationMatters',
-                description:
-                  'Creating awareness through menstrual health drives and establishing a platform for women empowerment. Breaking taboos and ensuring dignified living for women.',
-                stats: '32,000+ lives impacted',
-                icon: '💜',
-                color: 'from-pink-500/10 to-purple-500/10',
-                borderColor: 'border-pink-200',
-              },
-              {
-                name: 'Kill Hunger',
-                tagline: 'Food Security',
-                description:
-                  'A collective fight against hunger and malnutrition for the underprivileged by providing rations, food packets, and nutrition programs.',
-                stats: 'Supporting families across 9 cities',
-                icon: '🍲',
-                color: 'from-orange-500/10 to-red-500/10',
-                borderColor: 'border-orange-200',
-              },
-              {
-                name: 'Project Kinaara',
-                tagline: 'Beach Cleaning',
-                description:
-                  'Collective, impactful, and fun beach and coastal clean-up drives to beautify our environment and beaches of Mumbai and surrounding coastal areas.',
-                stats: 'Monthly cleanup drives',
-                icon: '🌊',
-                color: 'from-cyan-500/10 to-blue-500/10',
-                borderColor: 'border-cyan-200',
-              },
-              {
-                name: 'Project Shoonya',
-                tagline: 'Waste Management',
-                description:
-                  'Collaborating with local bodies and the general public to bring awareness about waste disposal, waste management, and recycling for a cleaner future.',
-                stats: '1,100+ awareness programs',
-                icon: '♻️',
-                color: 'from-green-500/10 to-emerald-500/10',
-                borderColor: 'border-green-200',
-              },
-              {
-                name: 'Blood Donation Drive',
-                tagline: '#BloodDoNation',
-                description:
-                  'Organizing regular blood donation camps and creating awareness about the importance of blood donation in saving lives.',
-                stats: '1,000+ units collected',
-                icon: '🩸',
-                color: 'from-red-500/10 to-pink-500/10',
-                borderColor: 'border-red-200',
-              },
-            ].map((program, index) => (
-              <AnimatedSection key={index} direction="up" delay={index * 100} className="h-full">
-                <div className={`group bg-linear-to-br ${program.color} rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border ${program.borderColor} h-full flex flex-col`}>
-                  <div className="text-5xl mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 inline-block">
-                    {program.icon}
+            {programs.length > 0 ? (
+              programs.map((program, index) => (
+                <AnimatedSection key={program._id || index} direction="up" delay={index * 100} className="h-full">
+                  <div className={`group bg-linear-to-br ${program.color || 'from-primary/10 to-accent/10'} rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border ${program.borderColor || 'border-primary/20'} h-full flex flex-col`}>
+                    <div className="text-5xl mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 inline-block">
+                      {program.icon}
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                      {program.name}
+                    </h3>
+                    <p className="text-primary font-semibold text-sm mb-3">{program.tagline}</p>
+                    <p className="text-foreground/70 text-sm leading-relaxed mb-4 grow">
+                      {program.description}
+                    </p>
+                    <div className="bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/50 mt-auto">
+                      <p className="text-primary font-bold text-xs">{program.stats}</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {program.name}
-                  </h3>
-                  <p className="text-primary font-semibold text-sm mb-3">{program.tagline}</p>
-                  <p className="text-foreground/70 text-sm leading-relaxed mb-4 grow">
-                    {program.description}
-                  </p>
-                  <div className="bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/50 mt-auto">
-                    <p className="text-primary font-bold text-xs">{program.stats}</p>
-                  </div>
-                </div>
-              </AnimatedSection>
-            ))}
+                </AnimatedSection>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                <p className="text-gray-500">No programs listed at the moment.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -269,10 +228,10 @@ export default function About() {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Track Record & Achievements */}
-      <section className="bg-white py-16 md:py-24 overflow-hidden">
+      < section className="bg-white py-16 md:py-24 overflow-hidden" >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection direction="fade" className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground">
@@ -280,35 +239,35 @@ export default function About() {
             </h2>
           </AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { number: '15+', label: 'Open Schools', desc: 'Providing free quality education' },
-              { number: '1100+', label: 'Active Volunteers', desc: 'Community changemakers' },
-              { number: '100K+', label: 'People Impacted', desc: 'Across 9 cities' },
-              { number: '20Cr+', label: 'Funds Mobilized', desc: 'For social impact' },
-              { number: '65K+', label: 'Trees Planted', desc: 'Environmental protection' },
-              { number: '2000+', label: 'Families Fed', desc: 'Through Kill Hunger' },
-              { number: '500+', label: 'Women Trained', desc: 'For economic independence' },
-              { number: '10Yrs+', label: 'In Service', desc: 'Making continuous impact' },
-            ].map((achievement, index) => (
+            {(trackRecords.length > 0 ? trackRecords : [
+              { value: '15+', title: 'Open Schools', description: 'Providing free quality education' },
+              { value: '1100+', title: 'Active Volunteers', description: 'Community changemakers' },
+              { value: '100K+', title: 'People Impacted', description: 'Across 9 cities' },
+              { value: '20Cr+', title: 'Funds Mobilized', description: 'For social impact' },
+              { value: '65K+', title: 'Trees Planted', description: 'Environmental protection' },
+              { value: '2000+', title: 'Families Fed', description: 'Through Kill Hunger' },
+              { value: '500+', title: 'Women Trained', description: 'For economic independence' },
+              { value: '10Yrs+', title: 'In Service', description: 'Making continuous impact' },
+            ]).map((achievement: any, index: number) => (
               <AnimatedSection key={index} direction="up" delay={index * 100}>
-                <div className="group bg-linear-to-br from-white to-gray-50 rounded-2xl p-6 md:p-8 text-center shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border border-gray-100 hover:border-primary/30">
+                <div className="group bg-linear-to-br from-white to-gray-50 rounded-2xl p-6 md:p-8 text-center shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border border-gray-100 hover:border-primary/30 h-full flex flex-col items-center justify-center">
                   <AnimatedNumber
-                    value={achievement.number}
+                    value={achievement.value || achievement.number}
                     className="text-4xl md:text-5xl font-bold bg-linear-to-r from-primary to-accent bg-clip-text text-transparent mb-3"
                   />
                   <h4 className="text-lg md:text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {achievement.label}
+                    {achievement.title || achievement.label}
                   </h4>
-                  <p className="text-sm text-foreground/70">{achievement.desc}</p>
+                  <p className="text-sm text-foreground/70">{achievement.description || achievement.desc}</p>
                 </div>
               </AnimatedSection>
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Governance & Transparency */}
-      <section className="bg-linear-to-b from-gray-50 to-white py-16 md:py-24 overflow-hidden">
+      < section className="bg-linear-to-b from-gray-50 to-white py-16 md:py-24 overflow-hidden" >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection direction="fade" className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground">
@@ -392,10 +351,10 @@ export default function About() {
             </AnimatedSection>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Team Section */}
-      <section className="bg-white py-16 md:py-24 overflow-hidden">
+      < section className="bg-white py-16 md:py-24 overflow-hidden" >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection direction="fade" className="text-center mb-6">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
@@ -408,11 +367,11 @@ export default function About() {
             </p>
           </AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {team.length > 0 ? (
-              team.slice(0, 6).map((member, idx) => (
+            {board.length > 0 ? (
+              board.map((member, idx) => (
                 <AnimatedSection key={member._id || idx} direction="up" delay={idx * 100}>
                   <div className="group bg-linear-to-br from-white to-gray-50 rounded-2xl p-6 md:p-8 text-center shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 hover:border-primary/30 h-full flex flex-col">
-                    <div className="w-20 h-20 bg-linear-to-br from-primary via-accent to-primary rounded-full mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
+                    <div className="w-24 h-24 bg-linear-to-br from-primary via-accent to-primary rounded-full mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
                       <Image
                         src={member.imageUrl || '/placeholder-avatar.jpg'}
                         alt={member.name}
@@ -421,14 +380,14 @@ export default function About() {
                       />
                       <div className="absolute inset-0 bg-linear-to-br from-white/20 to-transparent"></div>
                     </div>
-                    <h4 className="text-lg md:text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    <h4 className="text-xl md:text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                       {member.name}
                     </h4>
-                    <p className="text-sm text-primary font-semibold mb-3 bg-primary/10 px-3 py-1 rounded-lg inline-block">
+                    <p className="text-sm font-semibold mb-3 text-primary bg-primary/10 px-4 py-1.5 rounded-full inline-block">
                       {member.designation}
                     </p>
                     {member.bio && (
-                      <p className="text-sm text-foreground/70 leading-relaxed grow line-clamp-2">{member.bio}</p>
+                      <p className="text-sm text-foreground/70 leading-relaxed grow line-clamp-3">{member.bio}</p>
                     )}
                   </div>
                 </AnimatedSection>
@@ -469,7 +428,7 @@ export default function About() {
             )}
           </div>
         </div>
-      </section>
+      </section >
 
       <Footer />
     </>

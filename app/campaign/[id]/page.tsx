@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, Users, Target, Award, Heart, MapPin, Clock, User, Tag, Eye, IndianRupee, Check } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { DonationModal } from '@/components/donation-modal'
 
 // Mock data for campaigns - in a real app this would come from an API
@@ -171,6 +171,8 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
   const [isLoading, setIsLoading] = useState(true)
 
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
+  const searchParams = useSearchParams()
+  const shouldOpenDonate = searchParams.get('donate') === 'true'
 
   useEffect(() => {
     if (!id) return
@@ -191,6 +193,12 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
     }
     fetchCampaign()
   }, [id])
+
+  useEffect(() => {
+    if (shouldOpenDonate && campaign) {
+      setIsDonationModalOpen(true)
+    }
+  }, [shouldOpenDonate, campaign])
 
   if (isLoading) {
     return (
