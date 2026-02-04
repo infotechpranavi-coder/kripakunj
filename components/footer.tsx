@@ -199,9 +199,20 @@ export function Footer() {
         </div>
 
         <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm opacity-80 mb-4 md:mb-0">
-            &copy; 2025 Kripa Kunj Charitable Trust. All rights reserved.
-          </p>
+          <div className="text-sm opacity-80 mb-4 md:mb-0 text-center md:text-left">
+            <p>&copy; 2025 Kripa Kunj Charitable Trust. All rights reserved.</p>
+            <p className="mt-1">
+              Powered by{' '}
+              <a
+                href="https://pranaviinfotech.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold hover:text-white transition-colors underline decoration-white/30 underline-offset-4"
+              >
+                Pranvi Infotech
+              </a>
+            </p>
+          </div>
           <div className="flex flex-wrap gap-6 justify-center">
             <PrivacyPolicyModal />
             <TermsModal />
