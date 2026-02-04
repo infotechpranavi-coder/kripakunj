@@ -62,7 +62,7 @@ export function CollaboratorsSection() {
                   href={partner.link || '#'}
                   target={partner.link ? "_blank" : undefined}
                   rel={partner.link ? "noopener noreferrer" : undefined}
-                  className="grayscale hover:grayscale-0 transition-all duration-500 transform hover:scale-110 opacity-60 hover:opacity-100 flex-shrink-0"
+                  className="transition-all duration-500 transform hover:scale-110 flex-shrink-0"
                 >
                   <div className="relative w-32 h-16 md:w-40 md:h-20">
                     <Image

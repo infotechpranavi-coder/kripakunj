@@ -10,7 +10,7 @@ export function Footer() {
           {/* Brand Info */}
           <div className="lg:col-span-1">
             <div className="mb-6">
-              <h3 className="text-2xl font-bold mb-3">Kripa Kunj Charitable Trust</h3>
+              <h3 className="text-1xl font-bold mb-3">Kripa Kunj Charitable Trust</h3>
               <div className="h-1 w-12 bg-white/30 rounded-full mb-4"></div>
               <p className="text-sm opacity-90 leading-relaxed">
                 Serving Beyond Humanity - Making a difference in the lives of underprivileged communities through education, healthcare, and sustainable development.

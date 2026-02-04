@@ -12,6 +12,7 @@ import { VolunteerApplication } from '@/components/volunteer-application'
 
 export default function Events() {
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
+  const [pastEvents, setPastEvents] = useState<any[]>([])
 
   const [isLoading, setIsLoading] = useState(true)
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
@@ -25,19 +26,35 @@ export default function Events() {
       setIsLoading(true)
       const response = await fetch('/api/events')
       const result = await response.json()
+
+      const now = new Date()
+      // Reset time part to compare only dates properly if needed, but precise comp is okay
+      now.setHours(0, 0, 0, 0)
+
       if (result.success && result.data.length > 0) {
         const mappedEvents = result.data.map((e: any) => ({
           ...e,
           id: e._id, // Ensure id is available for links
+          rawDate: new Date(e.date), // Keep raw date for sorting
           date: new Date(e.date).toLocaleDateString('en-US', {
             month: 'long',
             day: 'numeric',
             year: 'numeric'
           })
         }))
-        setUpcomingEvents(mappedEvents)
+
+        const upcoming = mappedEvents.filter((e: any) => e.rawDate >= now)
+          .sort((a: any, b: any) => a.rawDate.getTime() - b.rawDate.getTime())
+
+        const past = mappedEvents.filter((e: any) => e.rawDate < now)
+          .sort((a: any, b: any) => b.rawDate.getTime() - a.rawDate.getTime())
+
+        setUpcomingEvents(upcoming)
+        setPastEvents(past)
       } else {
+        // Fallback for demo
         setUpcomingEvents(staticUpcomingEvents)
+        setPastEvents([])
       }
     } catch (error) {
       console.error('Failed to fetch events:', error)
@@ -91,74 +108,137 @@ export default function Events() {
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-foreground">
             Upcoming <span className="text-primary">Events</span>
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {upcomingEvents.map((event) => (
-              <div
-                key={event.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col cursor-pointer"
-              >
-                <Link href={`/events/${event.id}`} className="flex-grow">
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
-                    <div className="absolute top-4 right-4">
-                      <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary rounded-full text-xs font-semibold whitespace-nowrap">
-                        {event.category}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-4">{event.title}</h3>
-                    <div className="space-y-3 mb-4 text-foreground/70">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary text-sm">📅</span>
-                        </div>
-                        <span className="text-sm">{event.date}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary text-sm">🕐</span>
-                        </div>
-                        <span className="text-sm">{event.time}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary text-sm">📍</span>
-                        </div>
-                        <span className="text-sm">{event.location}</span>
+          {upcomingEvents.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {upcomingEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col cursor-pointer"
+                >
+                  <Link href={`/events/${event.id}`} className="flex-grow">
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
+                      <div className="absolute top-4 right-4">
+                        <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary rounded-full text-xs font-semibold whitespace-nowrap">
+                          {event.category}
+                        </span>
                       </div>
                     </div>
-                    <p className="text-foreground/70 mb-6 text-sm leading-relaxed line-clamp-3">{event.description}</p>
-                  </div>
-                </Link>
-                <div className="p-6 pt-0 flex gap-3 mt-auto">
-                  <div className="flex-1" onClick={(e) => e.stopPropagation()}>
-                    <EventRegistrationModal
-                      event={{ id: event.id, title: event.title }}
-                      trigger={
-                        <Button className="w-full h-11 bg-gradient-to-r from-primary to-secondary text-primary-foreground font-bold">
-                          Register Now
-                        </Button>
-                      }
-                    />
-                  </div>
-                  <Link
-                    href={`/events/${event.id}`}
-                    className="flex-1 h-11 flex items-center justify-center border border-primary text-primary rounded-lg font-bold hover:bg-primary/10 transition"
-                  >
-                    Details
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-4">{event.title}</h3>
+                      <div className="space-y-3 mb-4 text-foreground/70">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span className="text-primary text-sm">📅</span>
+                          </div>
+                          <span className="text-sm">{event.date}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span className="text-primary text-sm">🕐</span>
+                          </div>
+                          <span className="text-sm">{event.time}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span className="text-primary text-sm">📍</span>
+                          </div>
+                          <span className="text-sm">{event.location}</span>
+                        </div>
+                      </div>
+                      <p className="text-foreground/70 mb-6 text-sm leading-relaxed line-clamp-3">{event.description}</p>
+                    </div>
                   </Link>
+                  <div className="p-6 pt-0 flex gap-3 mt-auto">
+                    <div className="flex-1" onClick={(e) => e.stopPropagation()}>
+                      <EventRegistrationModal
+                        event={{ id: event.id, title: event.title }}
+                        trigger={
+                          <Button className="w-full h-11 bg-gradient-to-r from-primary to-secondary text-primary-foreground font-bold">
+                            Register Now
+                          </Button>
+                        }
+                      />
+                    </div>
+                    <Link
+                      href={`/events/${event.id}`}
+                      className="flex-1 h-11 flex items-center justify-center border border-primary text-primary rounded-lg font-bold hover:bg-primary/10 transition"
+                    >
+                      Details
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+              <p className="text-lg text-foreground/60">No upcoming events scheduled at the moment.</p>
+              <p className="text-sm text-foreground/40 mt-2">Check back later or view our past events below.</p>
+            </div>
+          )}
         </div>
       </section>
+
+      {/* Past Events */}
+      {pastEvents.length > 0 && (
+        <section className="bg-gray-50 py-16 md:py-24 border-t border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-foreground">
+              Our Past <span className="text-primary">Events</span>
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {pastEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 flex flex-col opacity-90 hover:opacity-100"
+                >
+                  <Link href={`/events/${event.id}`} className="flex-grow">
+                    <div className="relative h-48 overflow-hidden filter grayscale-[30%] group-hover:grayscale-0 transition-all duration-500">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute top-4 right-4">
+                        <span className="px-3 py-1 bg-gray-900/80 backdrop-blur-sm text-white rounded-full text-xs font-semibold whitespace-nowrap">
+                          Completed
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold text-foreground mb-4">{event.title}</h3>
+                      <div className="space-y-3 mb-4 text-foreground/60">
+                        <div className="flex items-center gap-2">
+                          <span className="text-primary/70 text-sm">📅</span>
+                          <span className="text-sm">{event.date}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-primary/70 text-sm">📍</span>
+                          <span className="text-sm">{event.location}</span>
+                        </div>
+                      </div>
+                      <p className="text-foreground/60 mb-6 text-sm leading-relaxed line-clamp-2">{event.description}</p>
+                    </div>
+                  </Link>
+                  <div className="p-6 pt-0 mt-auto">
+                    <Link
+                      href={`/events/${event.id}`}
+                      className="block w-full h-11 flex items-center justify-center bg-gray-100 text-foreground/80 rounded-lg font-semibold hover:bg-gray-200 transition"
+                    >
+                      View Highlights
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
 
 

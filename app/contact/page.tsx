@@ -47,6 +47,9 @@ export default function Contact() {
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -54,15 +57,38 @@ export default function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log('Form data:', formData)
-    setSubmitted(true)
-    setTimeout(() => {
-      setSubmitted(false)
+    setIsSubmitting(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          category: formData.subject // Map subject to category or keep separate
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to send message')
+      }
+
+      setSubmitted(true)
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
-    }, 3000)
+      setTimeout(() => {
+        setSubmitted(false)
+      }, 5000)
+    } catch (err) {
+      setError('Something went wrong. Please try again later.')
+      console.error(err)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const contactInfo = [
