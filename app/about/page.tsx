@@ -7,6 +7,7 @@ import { HeroSlider } from '@/components/hero-slider'
 import { AnimatedSection } from '@/components/animated-section'
 import { AnimatedNumber } from '@/components/animated-number'
 import Image from 'next/image'
+import { ProgramsCarousel } from '@/components/programs-carousel'
 
 export default function About() {
   const [team, setTeam] = useState<any[]>([])
@@ -44,7 +45,7 @@ export default function About() {
     {
       src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&q=80',
       alt: 'Environmental initiatives',
-      title: 'About Kripa Kunj',
+      title: 'Kripa Kunj Charitable Trust',
       subtitle: '10+ Years of Service',
       description: 'Established with a vision to bring meaningful change, Kripa Kunj Charitable Trust works towards creating a society where every person has access to basic resources, education, and opportunities for dignified living.',
     },
@@ -133,32 +134,8 @@ export default function About() {
               Our <span className="text-primary font-bold">Programs</span>
             </h2>
           </AnimatedSection>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {programs.length > 0 ? (
-              programs.map((program, index) => (
-                <AnimatedSection key={program._id || index} direction="up" delay={index * 100} className="h-full">
-                  <div className={`group bg-linear-to-br ${program.color || 'from-primary/10 to-accent/10'} rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border ${program.borderColor || 'border-primary/20'} h-full flex flex-col`}>
-                    <div className="text-5xl mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 inline-block">
-                      {program.icon}
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {program.name}
-                    </h3>
-                    <p className="text-primary font-semibold text-sm mb-3">{program.tagline}</p>
-                    <p className="text-foreground/70 text-sm leading-relaxed mb-4 grow">
-                      {program.description}
-                    </p>
-                    <div className="bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/50 mt-auto">
-                      <p className="text-primary font-bold text-xs">{program.stats}</p>
-                    </div>
-                  </div>
-                </AnimatedSection>
-              ))
-            ) : (
-              <div className="col-span-full text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                <p className="text-gray-500">No programs listed at the moment.</p>
-              </div>
-            )}
+          <div className="mt-8">
+            <ProgramsCarousel programs={programs} />
           </div>
         </div>
       </section>

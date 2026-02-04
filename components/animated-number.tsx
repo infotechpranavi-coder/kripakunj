@@ -13,6 +13,7 @@ export function AnimatedNumber({
   duration = 2000,
   className = '',
 }: AnimatedNumberProps) {
+  const [displayText, setDisplayText] = useState('')
   const [count, setCount] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -37,17 +38,28 @@ export function AnimatedNumber({
   useEffect(() => {
     if (!isVisible) return
 
-    // Extract number from value (handles formats like "65K+", "1100+", etc.)
-    const numStr = value.replace(/[^\d.]/g, '')
-    const num = parseFloat(numStr)
-    const hasK = value.includes('K')
-    const hasCr = value.includes('Cr')
-    const hasPlus = value.includes('+')
+    // Check if the value is a "Standard" number format we support animating (K, Cr, +)
+    // If it contains other letters (like "lakhs", "Schools"), we treat it as static text.
+    const cleanValueForCheck = value.replace(/K|Cr/g, '')
+    const hasOtherLetters = /[a-zA-Z]/.test(cleanValueForCheck)
 
-    if (isNaN(num)) {
-      setCount(0)
+    if (hasOtherLetters) {
+      // For complex strings (alphanumeric), simply display the text
+      setDisplayText(value)
       return
     }
+
+    // Extract number
+    const numStr = value.replace(/[^\d.]/g, '')
+    const num = parseFloat(numStr)
+
+    if (isNaN(num)) {
+      setDisplayText(value)
+      return
+    }
+
+    const hasK = value.includes('K')
+    const hasCr = value.includes('Cr')
 
     const target = hasK ? num * 1000 : hasCr ? num * 10000000 : num
     const increment = target / (duration / 16) // 60fps
@@ -67,6 +79,9 @@ export function AnimatedNumber({
   }, [isVisible, value, duration])
 
   const formatNumber = (num: number) => {
+    // If we decided to treat it as text (displayText is set), return that
+    // But we need to handle the render logic carefully. 
+    // Actually, let's just use a helper or do it in render.
     if (value.includes('Cr')) {
       return `${(num / 10000000).toFixed(0)}Cr+`
     }
@@ -81,7 +96,7 @@ export function AnimatedNumber({
 
   return (
     <div ref={ref} className={className}>
-      {formatNumber(count)}
+      {displayText ? displayText : formatNumber(count)}
     </div>
   )
 }

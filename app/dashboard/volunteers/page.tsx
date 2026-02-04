@@ -70,6 +70,36 @@ export default function VolunteersPage() {
     }
   }
 
+  const handleViewVolunteer = async (volunteer: any) => {
+    setSelectedVolunteer(volunteer)
+    setViewModalOpen(true)
+
+    // Update status to active if not already active
+    if (volunteer.status !== 'active') {
+      try {
+        const response = await fetch(`/api/volunteers/${volunteer._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: 'active' }),
+        })
+
+        const result = await response.json()
+        if (result.success) {
+          // Update local state
+          setVolunteersList(prev => prev.map(v =>
+            v._id === volunteer._id ? { ...v, status: 'active' } : v
+          ))
+          // Also update the selected volunteer so the modal shows the new status immediately
+          setSelectedVolunteer({ ...volunteer, status: 'active' })
+        }
+      } catch (error) {
+        console.error('Failed to update volunteer status:', error)
+      }
+    }
+  }
+
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
   const toggleDarkMode = () => setDarkMode(!darkMode)
 
@@ -86,7 +116,8 @@ export default function VolunteersPage() {
     total: volunteersList.length,
     pending: volunteersList.filter(v => v.status === 'pending').length,
     reviewed: volunteersList.filter(v => v.status === 'reviewed').length,
-    contacted: volunteersList.filter(v => v.status === 'contacted').length
+    contacted: volunteersList.filter(v => v.status === 'contacted').length,
+    active: volunteersList.filter(v => v.status === 'active').length
   }
 
   return (
@@ -118,7 +149,7 @@ export default function VolunteersPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Apps</CardTitle>
@@ -155,6 +186,15 @@ export default function VolunteersPage() {
                 <div className="text-2xl font-bold text-green-600">{stats.contacted}</div>
               </CardContent>
             </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active</CardTitle>
+                <Award className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-emerald-600">{stats.active}</div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Filters */}
@@ -179,6 +219,11 @@ export default function VolunteersPage() {
                   <option value="pending">Pending</option>
                   <option value="reviewed">Reviewed</option>
                   <option value="contacted">Contacted</option>
+                  <option value="all">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="reviewed">Reviewed</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="active">Active</option>
                 </select>
               </div>
             </div>
@@ -238,8 +283,9 @@ export default function VolunteersPage() {
                           <Badge className={
                             v.status === 'pending' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' :
                               v.status === 'reviewed' ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' :
-                                v.status === 'contacted' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
-                                  'bg-gray-100 text-gray-800 hover:bg-gray-100'
+                                v.status === 'contacted' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-100' :
+                                  v.status === 'active' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
+                                    'bg-gray-100 text-gray-800 hover:bg-gray-100'
                           }>
                             {v.status}
                           </Badge>
@@ -251,10 +297,7 @@ export default function VolunteersPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => {
-                              setSelectedVolunteer(v)
-                              setViewModalOpen(true)
-                            }}
+                            onClick={() => handleViewVolunteer(v)}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>

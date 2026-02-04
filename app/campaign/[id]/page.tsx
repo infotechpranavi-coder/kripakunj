@@ -168,6 +168,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
   const id = unwrappedParams.id
 
   const [campaign, setCampaign] = useState<any>(null)
+  const [relatedCampaigns, setRelatedCampaigns] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
@@ -176,22 +177,32 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
 
   useEffect(() => {
     if (!id) return
-    const fetchCampaign = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`/api/campaigns/${id}`)
-        const result = await response.json()
-        if (result.success) {
-          setCampaign(result.data)
+        const [campaignRes, allCampaignsRes] = await Promise.all([
+          fetch(`/api/campaigns/${id}`),
+          fetch('/api/campaigns', { cache: 'no-store' })
+        ])
+
+        const campaignResult = await campaignRes.json()
+        const allCampaignsResult = await allCampaignsRes.json()
+
+        if (campaignResult.success) {
+          setCampaign(campaignResult.data)
         } else {
-          console.error('API Error:', result.error)
+          console.error('API Error:', campaignResult.error)
+        }
+
+        if (allCampaignsResult.success) {
+          setRelatedCampaigns(allCampaignsResult.data)
         }
       } catch (error) {
-        console.error('Failed to fetch campaign:', error)
+        console.error('Failed to fetch data:', error)
       } finally {
         setIsLoading(false)
       }
     }
-    fetchCampaign()
+    fetchData()
   }, [id])
 
   useEffect(() => {
@@ -429,33 +440,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
               </Card>
             </section>
 
-            <div className="border-t border-gray-100" />
 
-            {/* Updates Section */}
-            <section id="updates">
-              <h2 className="text-3xl font-bold text-foreground mb-6">Updates</h2>
-              <div className="space-y-6">
-                {(campaign.updates || []).map((update: any, index: number) => (
-                  <Card key={index} className="border-l-4 border-l-primary hover:shadow-md transition-shadow">
-                    <CardHeader className="pb-2">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                        <CardTitle className="text-lg text-foreground">{update.title}</CardTitle>
-                        <Badge variant="secondary" className="self-start bg-primary/10 text-primary flex items-center text-xs">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {update.date ? new Date(update.date).toLocaleDateString() : 'N/A'}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-foreground/70">{update.description}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-                {(!campaign.updates || campaign.updates.length === 0) && (
-                  <p className="text-foreground/50 italic">No updates available for this campaign yet.</p>
-                )}
-              </div>
-            </section>
 
           </div>
 
@@ -559,8 +544,8 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 <p className="text-foreground/70 mb-6">
                   Your financial contribution can make a significant impact in advancing this cause.
                 </p>
-                <Button asChild className="bg-primary hover:bg-primary/90">
-                  <Link href="#donate">Make a Donation</Link>
+                <Button onClick={() => setIsDonationModalOpen(true)} className="bg-primary hover:bg-primary/90">
+                  Make a Donation
                 </Button>
               </Card>
             </AnimatedSection>
@@ -611,52 +596,57 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {campaigns.filter(c => c.id !== campaign.id).slice(0, 3).map((relatedCampaign, index) => (
-              <AnimatedSection key={relatedCampaign.id} direction="up" delay={index * 100}>
-                <Card className="overflow-hidden hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-b from-white to-gray-50">
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={relatedCampaign.image}
-                      alt={relatedCampaign.title}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <Badge className="bg-primary/80 backdrop-blur-sm">{relatedCampaign.category}</Badge>
-                    </div>
-                  </div>
+            {relatedCampaigns.filter(c => c._id !== campaign._id).slice(0, 3).map((relatedCampaign, index) => {
+              const progress = (relatedCampaign.raisedAmount / relatedCampaign.goalAmount) * 100;
+              const daysLeft = relatedCampaign.endDate ? Math.ceil((new Date(relatedCampaign.endDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0;
 
-                  <CardHeader>
-                    <CardTitle className="text-foreground">{relatedCampaign.title}</CardTitle>
-                  </CardHeader>
-
-                  <CardContent className="px-6 pb-6">
-                    <p className="text-foreground/70 mb-4 line-clamp-2">{relatedCampaign.description}</p>
-
-                    <div className="mb-4">
-                      <div className="flex justify-between text-sm font-medium text-foreground mb-1">
-                        <span>Funded</span>
-                        <span>₹{relatedCampaign.raised.toLocaleString()} of ₹{relatedCampaign.goal.toLocaleString()}</span>
-                      </div>
-                      <Progress value={relatedCampaign.progress} className="h-2" />
-                      <div className="flex justify-between text-xs text-foreground/50 mt-1">
-                        <span>{relatedCampaign.progress}%</span>
-                        <span>{relatedCampaign.daysLeft} days left</span>
+              return (
+                <AnimatedSection key={relatedCampaign._id} direction="up" delay={index * 100}>
+                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-b from-white to-gray-50">
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={relatedCampaign.images?.[0] || relatedCampaign.image || '/placeholder-campaign.jpg'}
+                        alt={relatedCampaign.title}
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                      <div className="absolute bottom-4 left-4 text-white">
+                        <Badge className="bg-primary/80 backdrop-blur-sm">{relatedCampaign.category}</Badge>
                       </div>
                     </div>
 
-                    <div className="flex gap-3">
-                      <Button asChild className="flex-1 bg-primary hover:bg-primary/90">
-                        <Link href={`/campaign/${relatedCampaign.id}`}>Donate</Link>
-                      </Button>
-                      <Button asChild variant="outline" className="border-primary/20">
-                        <Link href={`/campaign/${relatedCampaign.id}`}>View Details</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </AnimatedSection>
-            ))}
+                    <CardHeader>
+                      <CardTitle className="text-foreground">{relatedCampaign.title}</CardTitle>
+                    </CardHeader>
+
+                    <CardContent className="px-6 pb-6">
+                      <p className="text-foreground/70 mb-4 line-clamp-2">{relatedCampaign.description}</p>
+
+                      <div className="mb-4">
+                        <div className="flex justify-between text-sm font-medium text-foreground mb-1">
+                          <span>Funded</span>
+                          <span>₹{(relatedCampaign.raisedAmount || 0).toLocaleString()} of ₹{(relatedCampaign.goalAmount || 0).toLocaleString()}</span>
+                        </div>
+                        <Progress value={progress} className="h-2" />
+                        <div className="flex justify-between text-xs text-foreground/50 mt-1">
+                          <span>{progress.toFixed(0)}%</span>
+                          <span>{daysLeft > 0 ? `${daysLeft} days left` : 'Ended'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <Button asChild className="flex-1 bg-primary hover:bg-primary/90">
+                          <Link href={`/campaign/${relatedCampaign._id}`}>Donate</Link>
+                        </Button>
+                        <Button asChild variant="outline" className="border-primary/20">
+                          <Link href={`/campaign/${relatedCampaign._id}`}>View Details</Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedSection>
+              )
+            })}
           </div>
         </div>
       </section>

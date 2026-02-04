@@ -102,7 +102,6 @@ export default function Contact() {
       title: 'Phone Lines',
       details: [
         'Mobile: +91 98198 87551',
-        'Office: +91 22-2821-5555',
         'WhatsApp: +91 98198 87551',
       ],
       color: 'from-orange-500/10 to-yellow-500/10',

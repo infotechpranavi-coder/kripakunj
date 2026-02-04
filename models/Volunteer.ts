@@ -23,7 +23,7 @@ const VolunteerSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'reviewed', 'contacted', 'rejected', 'accepted'],
+        enum: ['pending', 'reviewed', 'contacted', 'rejected', 'accepted', 'active'],
         default: 'pending',
     },
     createdAt: {

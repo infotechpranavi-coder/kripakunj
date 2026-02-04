@@ -341,12 +341,12 @@ export default function Volunteer() {
           <p className="text-lg opacity-90 mb-8 leading-relaxed">
             Every moment counts. Join thousands of volunteers who are already making a positive impact in communities. Apply now and start your volunteering journey!
           </p>
-          <Link
-            href="/contact"
-            className="inline-block px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:opacity-90 transition"
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="inline-block px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:opacity-90 transition cursor-pointer"
           >
             Apply Now
-          </Link>
+          </button>
         </div>
       </section>
 

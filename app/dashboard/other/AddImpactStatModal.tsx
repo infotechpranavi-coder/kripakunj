@@ -90,12 +90,13 @@ export default function AddImpactStatModal({ onSuccess }: AddImpactStatModalProp
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="value">Value (e.g., 9 or 1100+) *</Label>
+                        <Label htmlFor="value">Value (e.g., 10k+, $1M, 50 Schools) *</Label>
                         <Input
                             id="value"
+                            type="text"
                             value={formData.value}
                             onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-                            placeholder="1100+"
+                            placeholder="e.g. 10k+, 50 Schools"
                             required
                         />
                     </div>

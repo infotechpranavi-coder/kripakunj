@@ -89,12 +89,13 @@ export default function AddTrackRecordModal({ onSuccess }: AddTrackRecordModalPr
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="value">Value (e.g., 15+ or 10Yrs+) *</Label>
+                        <Label htmlFor="value">Value (e.g., 15+, 10Yrs+, 20Cr+) *</Label>
                         <Input
                             id="value"
+                            type="text"
                             value={formData.value}
                             onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-                            placeholder="15+"
+                            placeholder="e.g. 15+, 20Cr+"
                             required
                         />
                     </div>

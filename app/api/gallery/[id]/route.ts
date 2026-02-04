@@ -4,16 +4,16 @@ import Gallery from '@/models/Gallery';
 
 export async function PUT(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     await dbConnect();
     try {
-        const { id } = params;
+        const { id } = await params;
         const formData = await req.formData();
         const imageFile = formData.get('image') as File;
 
         let imageUrl = '';
-        
+
         // If a new image is provided, upload it
         if (imageFile && imageFile.size > 0) {
             const cloudinary = (await import('@/lib/cloudinary')).default;
@@ -64,11 +64,11 @@ export async function PUT(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     await dbConnect();
     try {
-        const { id } = params;
+        const { id } = await params;
         const deletedImage = await Gallery.findByIdAndDelete(id);
 
         if (!deletedImage) {

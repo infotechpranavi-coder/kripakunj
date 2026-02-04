@@ -4,12 +4,12 @@ import ImpactStat from '@/models/ImpactStat';
 
 export async function PATCH(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await dbConnect();
         const body = await req.json();
-        const { id } = params;
+        const { id } = await params;
 
         const stat = await ImpactStat.findByIdAndUpdate(id, body, {
             new: true,
@@ -35,11 +35,11 @@ export async function PATCH(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await dbConnect();
-        const { id } = params;
+        const { id } = await params;
 
         const stat = await ImpactStat.findByIdAndDelete(id);
 

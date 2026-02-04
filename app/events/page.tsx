@@ -5,14 +5,14 @@ import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { HeroSlider } from '@/components/hero-slider'
 import Link from 'next/link'
-import { upcomingEvents as staticUpcomingEvents, pastEvents as staticPastEvents } from '@/lib/events-data'
+import { upcomingEvents as staticUpcomingEvents } from '@/lib/events-data'
 import { Button } from '@/components/ui/button'
 import EventRegistrationModal from '@/components/EventRegistrationModal'
 import { VolunteerApplication } from '@/components/volunteer-application'
 
 export default function Events() {
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
-  const [pastEvents, setPastEvents] = useState<any[]>(staticPastEvents)
+
   const [isLoading, setIsLoading] = useState(true)
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
 
@@ -160,59 +160,7 @@ export default function Events() {
         </div>
       </section>
 
-      {/* Past Events */}
-      <section className="bg-muted py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-foreground">
-            Past <span className="text-primary">Events & Impact</span>
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {pastEvents.map((event, index) => (
-              <div key={index} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col">
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
-                </div>
-                <div className="p-6 flex-grow">
-                  <h3 className="text-xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors">{event.title}</h3>
-                  <div className="space-y-3 text-foreground/70">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-primary text-sm">📅</span>
-                      </div>
-                      <span className="text-sm">{event.date}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-primary text-sm">👥</span>
-                      </div>
-                      <span className="text-sm">{event.participants} Participants</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-accent text-sm">🎯</span>
-                      </div>
-                      <span className="text-sm">{event.raised}</span>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-gray-100">
-                      <div className="flex items-start gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary text-sm">✨</span>
-                        </div>
-                        <span className="text-sm font-medium text-primary">{event.impact}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Call to Action */}
       <section className="relative text-primary-foreground py-16 md:py-24 overflow-hidden">
