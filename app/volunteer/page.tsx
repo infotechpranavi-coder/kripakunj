@@ -6,10 +6,22 @@ import { ImageSlider } from '@/components/image-slider'
 import { VolunteerApplication } from '@/components/volunteer-application'
 import { SocialMediaFloatingIcons } from '@/components/social-media-floating-icons'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { Share2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { shareLink } from '@/lib/share-utils'
 
 export default function Volunteer() {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const searchParams = useSearchParams()
+
+  // Check for volunteer query parameter
+  useEffect(() => {
+    if (searchParams.get('volunteer') === 'true') {
+      setIsModalOpen(true)
+    }
+  }, [searchParams])
   const volunteerOpportunities = [
     {
       title: 'Education Mentor',
@@ -341,12 +353,31 @@ export default function Volunteer() {
           <p className="text-lg opacity-90 mb-8 leading-relaxed">
             Every moment counts. Join thousands of volunteers who are already making a positive impact in communities. Apply now and start your volunteering journey!
           </p>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="inline-block px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:opacity-90 transition cursor-pointer"
-          >
-            Apply Now
-          </button>
+          <div className="flex items-center gap-2 justify-center">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="inline-block px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:opacity-90 transition cursor-pointer"
+            >
+              Apply Now
+            </button>
+            <button
+              onClick={async (e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                const shareUrl = `${window.location.origin}/volunteer?volunteer=true`
+                try {
+                  await shareLink(shareUrl, 'Volunteer With Us', 'Join us as a volunteer and make a difference!')
+                  toast.success('Link copied to clipboard!')
+                } catch (error) {
+                  toast.error('Failed to share link')
+                }
+              }}
+              className="p-3 bg-secondary/20 hover:bg-secondary/30 rounded-lg transition-all duration-300 cursor-pointer"
+              title="Share volunteer link"
+            >
+              <Share2 className="w-5 h-5 text-secondary" />
+            </button>
+          </div>
         </div>
       </section>
 

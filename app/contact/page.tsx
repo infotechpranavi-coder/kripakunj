@@ -33,6 +33,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { DonationModal } from '@/components/donation-modal'
 import { VolunteerApplication } from '@/components/volunteer-application'
+import { useSearchParams } from 'next/navigation'
+import { Share2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { shareLink } from '@/lib/share-utils'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -46,8 +50,19 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
+  const searchParams = useSearchParams()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Check for query parameters
+  React.useEffect(() => {
+    if (searchParams.get('donate') === 'true') {
+      setIsDonationModalOpen(true)
+    }
+    if (searchParams.get('volunteer') === 'true') {
+      setIsVolunteerModalOpen(true)
+    }
+  }, [searchParams])
   const [error, setError] = useState('')
 
   const handleChange = (
@@ -460,21 +475,59 @@ export default function Contact() {
               Join thousands of supporters who are transforming lives and creating lasting change in communities across India. Every contribution counts.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Button
-                size="lg"
-                className="h-16 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold text-lg shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                onClick={() => setIsDonationModalOpen(true)}
-              >
-                Donate Now
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-16 px-10 rounded-2xl border-2 border-primary/20 hover:border-primary hover:bg-primary/5 text-primary font-bold text-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                onClick={() => setIsVolunteerModalOpen(true)}
-              >
-                Volunteer With Us
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="lg"
+                  className="h-16 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold text-lg shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  onClick={() => setIsDonationModalOpen(true)}
+                >
+                  Donate Now
+                </Button>
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    const shareUrl = `${window.location.origin}/contact?donate=true`
+                    try {
+                      await shareLink(shareUrl, 'Donate Now', 'Support our cause by making a donation!')
+                      toast.success('Link copied to clipboard!')
+                    } catch (error) {
+                      toast.error('Failed to share link')
+                    }
+                  }}
+                  className="p-4 bg-primary/20 hover:bg-primary/30 rounded-2xl transition-all duration-300 cursor-pointer"
+                  title="Share donate link"
+                >
+                  <Share2 className="w-5 h-5 text-primary" />
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-16 px-10 rounded-2xl border-2 border-primary/20 hover:border-primary hover:bg-primary/5 text-primary font-bold text-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  onClick={() => setIsVolunteerModalOpen(true)}
+                >
+                  Volunteer With Us
+                </Button>
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    const shareUrl = `${window.location.origin}/contact?volunteer=true`
+                    try {
+                      await shareLink(shareUrl, 'Volunteer With Us', 'Join us as a volunteer and make a difference!')
+                      toast.success('Link copied to clipboard!')
+                    } catch (error) {
+                      toast.error('Failed to share link')
+                    }
+                  }}
+                  className="p-4 border-2 border-primary/20 hover:border-primary hover:bg-primary/5 rounded-2xl transition-all duration-300 cursor-pointer"
+                  title="Share volunteer link"
+                >
+                  <Share2 className="w-5 h-5 text-primary" />
+                </button>
+              </div>
             </div>
           </AnimatedSection>
         </div>

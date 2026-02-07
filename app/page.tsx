@@ -17,6 +17,8 @@ import { VolunteerApplication } from '@/components/volunteer-application'
 import { Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { useSearchParams } from 'next/navigation'
+import { shareLink } from '@/lib/share-utils'
 
 export default function Home() {
   const [dbCampaigns, setDbCampaigns] = useState<any[]>([])
@@ -25,6 +27,7 @@ export default function Home() {
   const [dbImpactStats, setDbImpactStats] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -593,19 +596,37 @@ export default function Home() {
           </AnimatedSection>
           <AnimatedSection direction="up" delay={300}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => setIsVolunteerModalOpen(true)}
-                className="group relative px-8 py-3 bg-secondary text-secondary-foreground rounded-xl font-semibold hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105 hover:shadow-xl overflow-hidden cursor-pointer"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  Volunteer With Us
-                  <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </span>
-                <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-              </button>
-
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsVolunteerModalOpen(true)}
+                  className="group relative px-8 py-3 bg-secondary text-secondary-foreground rounded-xl font-semibold hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105 hover:shadow-xl overflow-hidden cursor-pointer"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    Volunteer With Us
+                    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </span>
+                  <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                </button>
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    const shareUrl = `${window.location.origin}/?volunteer=true`
+                    try {
+                      await shareLink(shareUrl, 'Volunteer With Us', 'Join us as a volunteer and make a difference!')
+                      toast.success('Link copied to clipboard!')
+                    } catch (error) {
+                      toast.error('Failed to share link')
+                    }
+                  }}
+                  className="p-3 bg-secondary/20 hover:bg-secondary/30 rounded-xl transition-all duration-300 cursor-pointer"
+                  title="Share volunteer link"
+                >
+                  <Share2 className="w-5 h-5 text-secondary" />
+                </button>
+              </div>
             </div>
           </AnimatedSection>
         </div>

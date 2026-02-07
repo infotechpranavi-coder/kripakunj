@@ -9,8 +9,10 @@ import { upcomingEvents as staticUpcomingEvents } from '@/lib/events-data'
 import { Button } from '@/components/ui/button'
 import EventRegistrationModal from '@/components/EventRegistrationModal'
 import { VolunteerApplication } from '@/components/volunteer-application'
+import { useSearchParams } from 'next/navigation'
 import { Share2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { shareLink } from '@/lib/share-utils'
 
 export default function Events() {
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
@@ -308,12 +310,31 @@ export default function Events() {
           <p className="text-lg opacity-90 mb-8 leading-relaxed">
             Every event is an opportunity to make a difference. Sign up for any event above or get in touch to volunteer!
           </p>
-          <button
-            onClick={() => setIsVolunteerModalOpen(true)}
-            className="inline-block px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:opacity-90 transition cursor-pointer"
-          >
-            Join as Volunteer
-          </button>
+          <div className="flex items-center gap-2 justify-center">
+            <button
+              onClick={() => setIsVolunteerModalOpen(true)}
+              className="inline-block px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:opacity-90 transition cursor-pointer"
+            >
+              Join as Volunteer
+            </button>
+            <button
+              onClick={async (e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                const shareUrl = `${window.location.origin}/events?volunteer=true`
+                try {
+                  await shareLink(shareUrl, 'Volunteer With Us', 'Join us as a volunteer and make a difference!')
+                  toast.success('Link copied to clipboard!')
+                } catch (error) {
+                  toast.error('Failed to share link')
+                }
+              }}
+              className="p-3 bg-secondary/20 hover:bg-secondary/30 rounded-lg transition-all duration-300 cursor-pointer"
+              title="Share volunteer link"
+            >
+              <Share2 className="w-5 h-5 text-secondary" />
+            </button>
+          </div>
         </div>
       </section>
 
