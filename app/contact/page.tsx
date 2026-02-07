@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, Suspense } from 'react'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { Badge } from '@/components/ui/badge'
@@ -38,6 +38,29 @@ import { Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { shareLink } from '@/lib/share-utils'
 
+// Component that handles search params
+function SearchParamsHandler({
+  setIsDonationModalOpen,
+  setIsVolunteerModalOpen
+}: {
+  setIsDonationModalOpen: (open: boolean) => void
+  setIsVolunteerModalOpen: (open: boolean) => void
+}) {
+  const searchParams = useSearchParams()
+
+  // Check for query parameters
+  React.useEffect(() => {
+    if (searchParams.get('donate') === 'true') {
+      setIsDonationModalOpen(true)
+    }
+    if (searchParams.get('volunteer') === 'true') {
+      setIsVolunteerModalOpen(true)
+    }
+  }, [searchParams, setIsDonationModalOpen, setIsVolunteerModalOpen])
+
+  return null
+}
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
@@ -50,19 +73,7 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
-  const searchParams = useSearchParams()
-
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // Check for query parameters
-  React.useEffect(() => {
-    if (searchParams.get('donate') === 'true') {
-      setIsDonationModalOpen(true)
-    }
-    if (searchParams.get('volunteer') === 'true') {
-      setIsVolunteerModalOpen(true)
-    }
-  }, [searchParams])
   const [error, setError] = useState('')
 
   const handleChange = (
@@ -170,6 +181,12 @@ export default function Contact() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <SearchParamsHandler
+          setIsDonationModalOpen={setIsDonationModalOpen}
+          setIsVolunteerModalOpen={setIsVolunteerModalOpen}
+        />
+      </Suspense>
       <Navigation />
 
       {/* Hero Section */}
