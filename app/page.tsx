@@ -17,7 +17,6 @@ import { VolunteerApplication } from '@/components/volunteer-application'
 import { Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { useSearchParams } from 'next/navigation'
 import { shareLink } from '@/lib/share-utils'
 
 export default function Home() {
@@ -27,7 +26,6 @@ export default function Home() {
   const [dbImpactStats, setDbImpactStats] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false)
-  const searchParams = useSearchParams()
 
   useEffect(() => {
     const fetchCampaigns = async () => {
