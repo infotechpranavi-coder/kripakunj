@@ -240,12 +240,12 @@ export default function Home() {
       {/* Impact Stats */}
       <section className="bg-linear-to-b from-gray-50 via-white to-gray-50 py-16 md:py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimatedSection direction="fade" className="text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground font-poppins">
+          <AnimatedSection direction="fade" className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground font-poppins">
               Our <span className="text-primary">Impact</span>
             </h2>
           </AnimatedSection>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             {(dbImpactStats.length > 0 ? dbImpactStats : [
               { label: 'Cities Covered', value: '9', color: 'accent' },
               { label: 'Active Volunteers', value: '1100+', color: 'secondary' },
@@ -253,18 +253,18 @@ export default function Home() {
               { label: 'Funds Raised', value: '20Cr+', color: 'accent' }
             ]).map((stat, index) => (
               <AnimatedSection key={index} direction="up" delay={(index + 1) * 100} className="h-full">
-                <div className={`rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border ${stat.color === 'secondary' ? 'bg-linear-to-br from-secondary/10 to-secondary/5 border-secondary/20' :
+                <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 text-center shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border ${stat.color === 'secondary' ? 'bg-linear-to-br from-secondary/10 to-secondary/5 border-secondary/20' :
                   stat.color === 'accent' ? 'bg-linear-to-br from-accent/10 to-accent/5 border-accent/20' :
                     'bg-linear-to-br from-primary/10 to-primary/5 border-primary/20'
                   }`}>
                   <AnimatedNumber
                     value={stat.value}
-                    className={`text-3xl md:text-4xl font-bold mb-2 ${stat.color === 'secondary' ? 'text-secondary' :
+                    className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 ${stat.color === 'secondary' ? 'text-secondary' :
                       stat.color === 'accent' ? 'text-accent' :
                         'text-primary'
                       }`}
                   />
-                  <p className="text-foreground/70 font-medium">{stat.label}</p>
+                  <p className="text-xs sm:text-sm text-foreground/70 font-medium">{stat.label}</p>
                 </div>
               </AnimatedSection>
             ))}
@@ -277,19 +277,19 @@ export default function Home() {
 
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimatedSection direction="fade" className="text-center mb-12 relative">
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground font-poppins mb-4">
+          <AnimatedSection direction="fade" className="text-center mb-8 sm:mb-12 relative">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground font-poppins mb-3 sm:mb-4">
               Our Events
             </h2>
             {/* Wavy underline */}
             <div className="flex justify-center">
-              <svg className="w-64 md:w-96 h-8" viewBox="0 0 400 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-48 sm:w-64 md:w-96 h-6 sm:h-8" viewBox="0 0 400 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 20 Q100 5, 200 20 T400 20" stroke="#22c55e" strokeWidth="3" fill="none" strokeLinecap="round" />
               </svg>
             </div>
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
             {(dbEvents.length > 0 ? dbEvents : [
               {
                 id: '1',

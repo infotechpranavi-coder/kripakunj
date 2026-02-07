@@ -171,11 +171,11 @@ export default function Contact() {
               <Badge className="mb-6 bg-primary/10 text-primary hover:bg-primary/20 border-0 px-4 py-1 text-sm font-semibold uppercase tracking-wider rounded-full">
                 Get In Touch
               </Badge>
-              <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-8 leading-tight tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-6 sm:mb-8 leading-tight tracking-tight">
                 Let's Start a <br />
                 <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-accent to-primary animate-gradient-x font-extrabold italic">Conversation</span>
               </h1>
-              <p className="text-xl text-foreground/70 mb-10 leading-relaxed font-medium">
+              <p className="text-base sm:text-lg md:text-xl text-foreground/70 mb-8 sm:mb-10 leading-relaxed font-medium">
                 Whether you're looking to volunteer, donate, or just want to learn more about our mission, our team is here to help you make an impact.
               </p>
             </AnimatedSection>
@@ -186,18 +186,18 @@ export default function Contact() {
       {/* Contact Information */}
       <section className="bg-white py-24 md:py-32 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
             {contactInfo.map((info, index) => (
               <AnimatedSection key={index} direction="up" delay={index * 100}>
-                <div className={`group relative bg-linear-to-br ${info.color} rounded-3xl p-10 h-full border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden`}>
+                <div className={`group relative bg-linear-to-br ${info.color} rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 h-full border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden`}>
                   {/* Background Glow */}
                   <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
 
                   <div className="relative z-10">
-                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg mb-8 transform group-hover:rotate-6 transition-transform duration-300">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg mb-4 sm:mb-6 md:mb-8 transform group-hover:rotate-6 transition-transform duration-300">
                       {info.icon}
                     </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-6">{info.title}</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">{info.title}</h3>
                     <div className="space-y-3">
                       {info.details.map((detail, idx) => (
                         <p key={idx} className="text-sm text-foreground/70 font-medium leading-relaxed">
@@ -216,13 +216,13 @@ export default function Contact() {
       {/* Contact Form & Map Section */}
       <section className="relative py-24 md:py-32 bg-linear-to-b from-gray-50 to-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid md:grid-cols-2 gap-16 items-start">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-start">
             {/* Contact Form */}
             <AnimatedSection direction="right">
-              <div className="bg-white rounded-[2rem] p-10 md:p-12 shadow-2xl border border-gray-100">
-                <div className="mb-10">
-                  <h2 className="text-3xl font-bold text-foreground mb-4">Send a Message</h2>
-                  <p className="text-foreground/60 font-medium">Have a specific inquiry? Fill out the form below and our team will get back to you within 24 hours.</p>
+              <div className="bg-white rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 md:p-10 lg:p-12 shadow-2xl border border-gray-100">
+                <div className="mb-6 sm:mb-8 md:mb-10">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 sm:mb-4">Send a Message</h2>
+                  <p className="text-sm sm:text-base text-foreground/60 font-medium">Have a specific inquiry? Fill out the form below and our team will get back to you within 24 hours.</p>
                 </div>
 
                 {submitted && (
@@ -234,8 +234,8 @@ export default function Contact() {
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-sm font-bold text-foreground/80 ml-1">Full Name</Label>
                       <Input
@@ -244,7 +244,7 @@ export default function Contact() {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="h-14 rounded-xl border-gray-200 focus:ring-primary focus:border-primary px-5 font-medium"
+                        className="h-12 sm:h-14 rounded-xl border-gray-200 focus:ring-primary focus:border-primary px-4 sm:px-5 font-medium text-sm sm:text-base"
                         placeholder="John Doe"
                       />
                     </div>
@@ -257,13 +257,13 @@ export default function Contact() {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="h-14 rounded-xl border-gray-200 focus:ring-primary focus:border-primary px-5 font-medium"
+                        className="h-12 sm:h-14 rounded-xl border-gray-200 focus:ring-primary focus:border-primary px-4 sm:px-5 font-medium text-sm sm:text-base"
                         placeholder="john@example.com"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                     <div className="space-y-2">
                       <Label htmlFor="phone" className="text-sm font-bold text-foreground/80 ml-1">Phone Number</Label>
                       <Input
@@ -272,7 +272,7 @@ export default function Contact() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="h-14 rounded-xl border-gray-200 focus:ring-primary focus:border-primary px-5 font-medium"
+                        className="h-12 sm:h-14 rounded-xl border-gray-200 focus:ring-primary focus:border-primary px-4 sm:px-5 font-medium text-sm sm:text-base"
                         placeholder="+91 XXXXX XXXXX"
                       />
                     </div>
@@ -284,7 +284,7 @@ export default function Contact() {
                         value={formData.subject}
                         onChange={handleChange}
                         required
-                        className="flex h-14 w-full rounded-xl border border-gray-200 bg-transparent px-5 py-2 text-sm font-medium ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-12 sm:h-14 w-full rounded-xl border border-gray-200 bg-transparent px-4 sm:px-5 py-2 text-sm sm:text-base font-medium ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <option value="">Select Inquiry Type</option>
                         <option value="general">General Support</option>
@@ -304,15 +304,15 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       placeholder="How can we help you today?"
-                      className="min-h-[160px] rounded-2xl border-gray-200 focus:ring-primary focus:border-primary p-5 font-medium resize-none"
+                      className="min-h-[120px] sm:min-h-[160px] rounded-xl sm:rounded-2xl border-gray-200 focus:ring-primary focus:border-primary p-4 sm:p-5 font-medium resize-none text-sm sm:text-base"
                     />
                   </div>
 
                   <Button
                     type="submit"
-                    className="w-full h-16 bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold text-lg shadow-xl shadow-primary/20 transition-all hover:-translate-y-1"
+                    className="w-full h-12 sm:h-14 md:h-16 bg-primary hover:bg-primary/90 text-white rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg shadow-xl shadow-primary/20 transition-all hover:-translate-y-1"
                   >
-                    <Send className="w-5 h-5 mr-3" />
+                    <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                     Send Message
                   </Button>
                 </form>
@@ -320,11 +320,11 @@ export default function Contact() {
             </AnimatedSection>
 
             {/* Side Info & Socials */}
-            <div className="space-y-12">
+            <div className="space-y-8 sm:space-y-12 mt-8 md:mt-0">
               <AnimatedSection direction="left" delay={200}>
-                <div className="bg-primary/5 rounded-[2rem] p-10 border border-primary/10">
-                  <h3 className="text-2xl font-bold text-foreground mb-6">Support & Assistance</h3>
-                  <div className="space-y-8">
+                <div className="bg-primary/5 rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-primary/10">
+                  <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Support & Assistance</h3>
+                  <div className="space-y-6 sm:space-y-8">
                     {[
                       {
                         title: 'Fast Response',

@@ -77,35 +77,35 @@ export default function About() {
       {/* Vision & Mission */}
       <section className="bg-linear-to-br from-primary/5 via-accent/5 to-primary/10 py-16 md:py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
             <AnimatedSection direction="right" delay={100}>
-              <div className="group bg-white rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 h-full">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-linear-to-br from-primary to-primary/70 rounded-xl flex items-center justify-center">
-                    <span className="text-2xl">👁️</span>
+              <div className="group bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 h-full">
+                <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-primary to-primary/70 rounded-lg sm:rounded-xl flex items-center justify-center">
+                    <span className="text-xl sm:text-2xl">👁️</span>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground">Our Vision</h2>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">Our Vision</h2>
                 </div>
-                <p className="text-foreground/70 leading-relaxed mb-4 text-lg">
+                <p className="text-foreground/70 leading-relaxed mb-3 sm:mb-4 text-base sm:text-lg">
                   Our foresight of 50 years ahead is a country free of NGOs. We envision a society where every individual, regardless of their background, has access to quality education, healthcare, and opportunities for personal and professional growth.
                 </p>
-                <p className="text-foreground/70 leading-relaxed text-lg">
+                <p className="text-foreground/70 leading-relaxed text-base sm:text-lg">
                   We believe in breaking the vicious cycle of poverty and social isolation by restoring hope and enabling people to become active, contributing members of society.
                 </p>
               </div>
             </AnimatedSection>
             <AnimatedSection direction="left" delay={200}>
-              <div className="group bg-white rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 h-full">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-linear-to-br from-accent to-accent/70 rounded-xl flex items-center justify-center">
-                    <span className="text-2xl">🎯</span>
+              <div className="group bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 h-full">
+                <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-accent to-accent/70 rounded-lg sm:rounded-xl flex items-center justify-center">
+                    <span className="text-xl sm:text-2xl">🎯</span>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground">Our Mission</h2>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">Our Mission</h2>
                 </div>
-                <p className="text-foreground/70 leading-relaxed mb-6 text-lg">
+                <p className="text-foreground/70 leading-relaxed mb-4 sm:mb-6 text-base sm:text-lg">
                   We are committed to exterminating the miserable conditions prevalent in our nation so that people can live with dignity. Our mission encompasses:
                 </p>
-                <ul className="space-y-4">
+                <ul className="space-y-3 sm:space-y-4">
                   {[
                     'Quality Education for underprivileged children',
                     'Healthcare and hygiene awareness programs',
@@ -113,10 +113,10 @@ export default function About() {
                     'Women empowerment and economic independence',
                   ].map((item, idx) => (
                     <li key={idx} className="flex items-start gap-3 group/item">
-                      <span className="w-6 h-6 bg-linear-to-br from-primary to-accent rounded-lg flex items-center justify-center text-white font-bold text-sm mt-0.5 shrink-0 group-hover/item:scale-110 transition-transform">
+                      <span className="w-5 h-5 sm:w-6 sm:h-6 bg-linear-to-br from-primary to-accent rounded-lg flex items-center justify-center text-white font-bold text-xs sm:text-sm mt-0.5 shrink-0 group-hover/item:scale-110 transition-transform">
                         ✓
                       </span>
-                      <span className="text-foreground/80 font-medium text-lg leading-relaxed">{item}</span>
+                      <span className="text-foreground/80 font-medium text-base sm:text-lg leading-relaxed">{item}</span>
                     </li>
                   ))}
                 </ul>

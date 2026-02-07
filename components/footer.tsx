@@ -5,14 +5,14 @@ import { PrivacyPolicyModal } from './PrivacyPolicyModal'
 export function Footer() {
   return (
     <footer className="bg-gradient-to-br from-primary to-primary/90 text-primary-foreground">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12">
           {/* Brand Info */}
           <div className="lg:col-span-1">
             <div className="mb-6">
-              <h3 className="text-1xl font-bold mb-3">Kripa Kunj Charitable Trust</h3>
-              <div className="h-1 w-12 bg-white/30 rounded-full mb-4"></div>
-              <p className="text-sm opacity-90 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Kripa Kunj Charitable Trust</h3>
+              <div className="h-1 w-12 bg-white/30 rounded-full mb-3 sm:mb-4"></div>
+              <p className="text-xs sm:text-sm opacity-90 leading-relaxed">
                 Serving Beyond Humanity - Making a difference in the lives of underprivileged communities through education, healthcare, and sustainable development.
               </p>
             </div>
@@ -60,7 +60,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-6 pb-2 border-b border-white/20">Quick Links</h4>
+            <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 pb-2 border-b border-white/20">Quick Links</h4>
             <ul className="space-y-4">
               <li>
                 <Link href="/" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
@@ -97,7 +97,7 @@ export function Footer() {
 
           {/* Support Us */}
           <div>
-            <h4 className="text-lg font-semibold mb-6 pb-2 border-b border-white/20">Support Us</h4>
+            <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 pb-2 border-b border-white/20">Support Us</h4>
             <ul className="space-y-4">
               <li>
                 <Link href="/campaigns" className="flex items-center gap-2 hover:text-white/80 transition-colors duration-300 group">
@@ -122,8 +122,8 @@ export function Footer() {
 
           {/* Our Mission */}
           <div>
-            <h4 className="text-lg font-semibold mb-6 pb-2 border-b border-white/20">Our Mission</h4>
-            <p className="text-sm opacity-90 leading-relaxed mb-6">
+            <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 pb-2 border-b border-white/20">Our Mission</h4>
+            <p className="text-xs sm:text-sm opacity-90 leading-relaxed mb-4 sm:mb-6">
               To empower underprivileged communities by providing quality education, accessible healthcare, and sustainable livelihood opportunities. We believe in creating a world where every individual has the chance to thrive and contribute to a better society.
             </p>
           </div>
@@ -131,12 +131,12 @@ export function Footer() {
 
           {/* Newsletter & Social */}
           <div>
-            <h4 className="text-lg font-semibold mb-6 pb-2 border-b border-white/20">Connect With Us</h4>
+            <h4 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 pb-2 border-b border-white/20">Connect With Us</h4>
 
             {/* Social Media */}
-            <div className="mb-8">
-              <h5 className="text-sm font-medium mb-4 opacity-90">Follow Us</h5>
-              <div className="flex flex-wrap gap-4">
+            <div className="mb-6 sm:mb-8">
+              <h5 className="text-xs sm:text-sm font-medium mb-3 sm:mb-4 opacity-90">Follow Us</h5>
+              <div className="flex flex-wrap gap-3 sm:gap-4">
                 <a
                   href="https://youtube.com/@kripakunjtrust"
                   target="_blank"
@@ -198,8 +198,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <div className="text-sm opacity-80 mb-4 md:mb-0 text-center md:text-left">
+        <div className="border-t border-white/20 mt-8 sm:mt-12 pt-6 sm:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-xs sm:text-sm opacity-80 text-center md:text-left">
             <p>&copy; 2025 Kripa Kunj Charitable Trust. All rights reserved.</p>
             <p className="mt-1">
               Powered by{' '}

@@ -210,9 +210,9 @@ export default function MessagesPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Messages</CardTitle>
@@ -256,9 +256,9 @@ export default function MessagesPage() {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 sm:space-y-4 md:space-y-0">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 md:space-x-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
@@ -271,7 +271,7 @@ export default function MessagesPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-2 sm:px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
               >
                 <option value="all">All Status</option>
                 <option value="unread">Unread</option>
@@ -281,7 +281,7 @@ export default function MessagesPage() {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-2 sm:px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
               >
                 <option value="all">All Categories</option>
                 <option value="Volunteer">Volunteer</option>
@@ -293,7 +293,7 @@ export default function MessagesPage() {
               <select
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-2 sm:px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
               >
                 <option value="all">All Priorities</option>
                 <option value="high">High</option>
@@ -301,9 +301,10 @@ export default function MessagesPage() {
                 <option value="low">Low</option>
               </select>
             </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Advanced Filter
+            <Button variant="outline" className="text-xs sm:text-sm">
+              <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Advanced Filter</span>
+              <span className="sm:hidden">Filter</span>
             </Button>
           </div>
         </div>
@@ -314,7 +315,9 @@ export default function MessagesPage() {
             <CardTitle>All Messages</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="inline-block min-w-full align-middle px-4 sm:px-0">
+                <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Sender</TableHead>
@@ -400,6 +403,8 @@ export default function MessagesPage() {
                 ))}
               </TableBody>
             </Table>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -407,24 +412,24 @@ export default function MessagesPage() {
 
     {/* View Message Modal */}
     <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto mx-4">
         {selectedMessage && (
           <>
             <DialogHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <User className="w-6 h-6 text-primary" />
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <User className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <DialogTitle className="text-2xl font-bold">{selectedMessage.sender}</DialogTitle>
-                  <DialogDescription className="text-primary/70 font-medium">
+                  <DialogTitle className="text-xl sm:text-2xl font-bold">{selectedMessage.sender}</DialogTitle>
+                  <DialogDescription className="text-primary/70 font-medium text-xs sm:text-sm">
                     Message Details
                   </DialogDescription>
                 </div>
               </div>
             </DialogHeader>
 
-            <div className="space-y-6 mt-4">
+            <div className="space-y-4 sm:space-y-6 mt-3 sm:mt-4">
               {/* Subject */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">

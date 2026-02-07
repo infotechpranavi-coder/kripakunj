@@ -142,10 +142,10 @@ export default function CampaignsPage() {
               <Badge className="bg-primary/10 text-primary mb-6 px-4 py-2 rounded-full text-sm font-medium">
                 Our Impact Initiatives
               </Badge>
-              <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 font-poppins">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6 font-poppins">
                 Join Our <span className="text-primary">Campaigns</span> for Change
               </h1>
-              <p className="text-xl text-foreground/70 mb-10 leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-foreground/70 mb-8 sm:mb-10 leading-relaxed">
                 Be part of meaningful initiatives that create lasting impact in education, environment, healthcare, and community development. Every contribution matters.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -186,15 +186,15 @@ export default function CampaignsPage() {
       <section className="bg-white py-16 md:py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection direction="fade" className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground font-poppins mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground font-poppins mb-3 sm:mb-4">
               Active <span className="text-primary">Campaigns</span>
             </h2>
-            <p className="text-xl text-foreground/70 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto">
               Support our ongoing initiatives that are making a real difference in communities across the country.
             </p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {isLoading ? (
               <div className="col-span-full text-center py-20 text-foreground/50">Loading campaigns...</div>
             ) : filteredCampaigns.length === 0 ? (

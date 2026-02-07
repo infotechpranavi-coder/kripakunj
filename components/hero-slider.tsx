@@ -56,7 +56,7 @@ export function HeroSlider({
 
   return (
     <div
-      className="relative w-full h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden group"
+      className="relative w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden group"
       onMouseEnter={() => setIsAutoPlay(false)}
       onMouseLeave={() => setIsAutoPlay(autoPlay)}
     >
@@ -81,32 +81,32 @@ export function HeroSlider({
             {/* Text Content Overlay */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                <div className="max-w-4xl text-white">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-balance">
+                <div className="max-w-4xl text-white px-4">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 md:mb-6 text-balance">
                     {slide.title}
                   </h1>
                   {slide.subtitle && (
-                    <p className="text-xl md:text-2xl lg:text-3xl mb-4 md:mb-6 text-primary-foreground/90 font-semibold">
+                    <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-3 sm:mb-4 md:mb-6 text-primary-foreground/90 font-semibold">
                       {slide.subtitle}
                     </p>
                   )}
                   {slide.description && (
-                    <p className="text-lg md:text-xl mb-6 md:mb-8 text-white/90 leading-relaxed max-w-2xl">
+                    <p className="text-base sm:text-lg md:text-xl mb-4 sm:mb-6 md:mb-8 text-white/90 leading-relaxed max-w-2xl">
                       {slide.description}
                     </p>
                   )}
-                  <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
 
                     <button
                       onClick={() => setIsModalOpen(true)}
-                      className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition text-center inline-block cursor-pointer"
+                      className="px-6 sm:px-8 py-2.5 sm:py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition text-center inline-block cursor-pointer text-sm sm:text-base"
                     >
                       Donate Now
                     </button>
                     {slide.link && (
                       <Link
                         href={slide.link}
-                        className="px-8 py-3 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition text-center inline-block"
+                        className="px-6 sm:px-8 py-2.5 sm:py-3 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition text-center inline-block text-sm sm:text-base"
                       >
                         Learn More
                       </Link>
