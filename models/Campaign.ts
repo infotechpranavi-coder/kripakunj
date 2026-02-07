@@ -19,6 +19,11 @@ const CampaignSchema = new mongoose.Schema({
         required: [true, 'Please provide a title for this campaign.'],
         maxlength: [100, 'Title cannot be more than 100 characters'],
     },
+    slug: {
+        type: String,
+        unique: true,
+        lowercase: true,
+    },
     shortDescription: String,
     aboutCampaign: String,
     images: {
@@ -57,6 +62,53 @@ if (mongoose.models.Campaign) {
     console.log("Deleting existing Campaign model from cache...");
     delete mongoose.models.Campaign;
 }
+
+// Generate slug from title before saving
+CampaignSchema.pre('save', async function(next) {
+    if (this.isModified('title') || this.isNew) {
+        // Generate slug from title
+        let baseSlug = this.title
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // Remove special characters
+            .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+        
+        // Ensure uniqueness by appending a number if needed
+        let slug = baseSlug;
+        let counter = 1;
+        const CampaignModel = this.constructor as any;
+        while (await CampaignModel.findOne({ slug, _id: { $ne: this._id } })) {
+            slug = `${baseSlug}-${counter}`;
+            counter++;
+        }
+        this.slug = slug;
+    }
+    next();
+});
+
+CampaignSchema.pre('findOneAndUpdate', async function(next) {
+    const update = this.getUpdate() as any;
+    if (update.title) {
+        let baseSlug = update.title
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        
+        // Ensure uniqueness
+        let slug = baseSlug;
+        let counter = 1;
+        const query = this.getQuery();
+        while (await Campaign.findOne({ slug, _id: { $ne: query._id } })) {
+            slug = `${baseSlug}-${counter}`;
+            counter++;
+        }
+        update.slug = slug;
+    }
+    next();
+});
 
 const Campaign = mongoose.model('Campaign', CampaignSchema);
 console.log("Campaign model registered successfully.");

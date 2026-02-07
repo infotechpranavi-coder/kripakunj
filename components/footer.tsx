@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { TermsModal } from './TermsModal'
 import { PrivacyPolicyModal } from './PrivacyPolicyModal'
+import { RefundPolicyModal } from './RefundPolicyModal'
 
 export function Footer() {
   return (
@@ -216,7 +217,7 @@ export function Footer() {
           <div className="flex flex-wrap gap-6 justify-center">
             <PrivacyPolicyModal />
             <TermsModal />
-
+            <RefundPolicyModal />
           </div>
         </div>
       </div>

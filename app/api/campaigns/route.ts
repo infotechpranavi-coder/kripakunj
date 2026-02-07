@@ -49,8 +49,26 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Generate slug from title
+    const title = formData.get('title') as string || '';
+    let baseSlug = title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    
+    // Ensure uniqueness
+    let slug = baseSlug;
+    let counter = 1;
+    while (await Campaign.findOne({ slug })) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
     const campaignData = {
-      title: formData.get('title') as string || '',
+      title: title,
+      slug: slug,
       shortDescription: formData.get('shortDescription') as string || '',
       aboutCampaign: formData.get('aboutCampaign') as string || '',
       images: imageUrls,

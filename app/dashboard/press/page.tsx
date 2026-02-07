@@ -7,13 +7,25 @@ import {
     EyeOff,
     Bell,
     Plus,
-    Megaphone
+    Megaphone,
+    Trash2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import AdminSidebar from '@/components/admin-sidebar'
 import AddPressReleaseModal from './AddPressReleaseModal'
+import { toast } from 'sonner'
 
 interface PressRelease {
     _id: string
@@ -29,6 +41,9 @@ export default function PressReleasePage() {
     const [darkMode, setDarkMode] = useState(false)
     const [releases, setReleases] = useState<PressRelease[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [pressReleaseToDelete, setPressReleaseToDelete] = useState<string | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
 
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
     const toggleDarkMode = () => setDarkMode(!darkMode)
@@ -51,6 +66,37 @@ export default function PressReleasePage() {
     useEffect(() => {
         fetchReleases()
     }, [])
+
+    const handleDeleteClick = (id: string) => {
+        setPressReleaseToDelete(id)
+        setDeleteDialogOpen(true)
+    }
+
+    const handleDeleteConfirm = async () => {
+        if (!pressReleaseToDelete) return
+
+        setIsDeleting(true)
+        try {
+            const response = await fetch(`/api/press/${pressReleaseToDelete}`, {
+                method: 'DELETE',
+            })
+            const result = await response.json()
+
+            if (result.success) {
+                toast.success('Press release deleted successfully')
+                setReleases(releases.filter(r => r._id !== pressReleaseToDelete))
+            } else {
+                toast.error(result.error || 'Failed to delete press release')
+            }
+        } catch (error) {
+            console.error('Error deleting press release:', error)
+            toast.error('An error occurred while deleting the press release')
+        } finally {
+            setIsDeleting(false)
+            setDeleteDialogOpen(false)
+            setPressReleaseToDelete(null)
+        }
+    }
 
     return (
         <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
@@ -118,21 +164,43 @@ export default function PressReleasePage() {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {releases.map((item) => (
-                                <Card key={item._id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                                    <div className="h-48 w-full bg-gray-100 overflow-hidden">
+                                <Card key={item._id} className="overflow-hidden hover:shadow-lg transition-shadow relative group">
+                                    <div className="h-48 w-full bg-gray-100 overflow-hidden relative">
                                         <img
                                             src={item.imageUrl}
                                             alt={item.title}
                                             className="w-full h-full object-cover"
                                         />
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => handleDeleteClick(item._id)}
+                                            className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-700 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                            title="Delete press release"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
                                     </div>
                                     <CardContent className="p-4">
-                                        <h3 className="font-semibold text-sm line-clamp-2 mb-1">
-                                            {item.title}
-                                        </h3>
-                                        <p className="text-xs text-gray-500">
-                                            {new Date(item.date || item.createdAt || item.updatedAt || Date.now()).toLocaleDateString?.() ?? ''}
-                                        </p>
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex-1">
+                                                <h3 className="font-semibold text-sm line-clamp-2 mb-1">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="text-xs text-gray-500">
+                                                    {new Date(item.date || item.createdAt || item.updatedAt || Date.now()).toLocaleDateString?.() ?? ''}
+                                                </p>
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => handleDeleteClick(item._id)}
+                                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 shrink-0"
+                                                title="Delete press release"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     </CardContent>
                                 </Card>
                             ))}
@@ -140,6 +208,28 @@ export default function PressReleasePage() {
                     )}
                 </div>
             </div>
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the press release from the system.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleDeleteConfirm}
+                            disabled={isDeleting}
+                            className="bg-red-600 hover:bg-red-700"
+                        >
+                            {isDeleting ? 'Deleting...' : 'Delete'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

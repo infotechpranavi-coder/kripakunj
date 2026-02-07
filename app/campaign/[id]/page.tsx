@@ -9,11 +9,12 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 // No longer using local Dialog here as we use DonationModal
-import { Calendar, Users, Target, Award, Heart, MapPin, Clock, User, Tag, Eye, IndianRupee, Check } from 'lucide-react'
+import { Calendar, Users, Target, Award, Heart, MapPin, Clock, User, Tag, Eye, IndianRupee, Check, Share2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { DonationModal } from '@/components/donation-modal'
+import { toast } from 'sonner'
 
 // Mock data for campaigns - in a real app this would come from an API
 const campaigns = [
@@ -166,6 +167,7 @@ const campaigns = [
 export default function CampaignDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = React.use(params)
   const id = unwrappedParams.id
+  const router = useRouter()
 
   const [campaign, setCampaign] = useState<any>(null)
   const [relatedCampaigns, setRelatedCampaigns] = useState<any[]>([])
@@ -210,6 +212,36 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
       setIsDonationModalOpen(true)
     }
   }, [shouldOpenDonate, campaign])
+
+  const handleShare = async (campaignSlug: string, campaignTitle: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const shareUrl = `${window.location.origin}/campaign/${campaignSlug}`
+    
+    // Try Web Share API first (mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: campaignTitle,
+          text: `Check out this campaign: ${campaignTitle}`,
+          url: shareUrl,
+        })
+        toast.success('Shared successfully!')
+        return
+      } catch (err) {
+        // User cancelled or error occurred, fall back to clipboard
+      }
+    }
+    
+    // Fallback to clipboard
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      toast.success('Link copied to clipboard!')
+    } catch (err) {
+      toast.error('Failed to copy link')
+    }
+  }
 
   if (isLoading) {
     return (
@@ -574,8 +606,16 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 <p className="text-foreground/70 mb-6">
                   Share this campaign with your network to increase its reach and impact.
                 </p>
-                <Button asChild variant="outline" className="border-primary/20">
-                  <Link href="#">Share Campaign</Link>
+                <Button 
+                  variant="outline" 
+                  className="border-primary/20"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const campaignSlug = campaign?.slug || id;
+                    handleShare(campaignSlug, campaign?.title || '', e as any);
+                  }}
+                >
+                  Share Campaign
                 </Button>
               </Card>
             </AnimatedSection>
@@ -599,10 +639,14 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
             {relatedCampaigns.filter(c => c._id !== campaign._id).slice(0, 3).map((relatedCampaign, index) => {
               const progress = (relatedCampaign.raisedAmount / relatedCampaign.goalAmount) * 100;
               const daysLeft = relatedCampaign.endDate ? Math.ceil((new Date(relatedCampaign.endDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0;
+              const campaignSlug = relatedCampaign.slug || relatedCampaign._id;
 
               return (
                 <AnimatedSection key={relatedCampaign._id} direction="up" delay={index * 100}>
-                  <Card className="overflow-hidden hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-b from-white to-gray-50">
+                  <Card 
+                    className="overflow-hidden hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-b from-white to-gray-50 cursor-pointer h-full"
+                    onClick={() => router.push(`/campaign/${campaignSlug}`)}
+                  >
                     <div className="relative h-48 overflow-hidden">
                       <img
                         src={relatedCampaign.images?.[0] || relatedCampaign.image || '/placeholder-campaign.jpg'}
@@ -634,12 +678,28 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                         </div>
                       </div>
 
-                      <div className="flex gap-3">
-                        <Button asChild className="flex-1 bg-primary hover:bg-primary/90">
-                          <Link href={`/campaign/${relatedCampaign._id}`}>Donate</Link>
+                      <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
+                        <Button 
+                          asChild 
+                          className="flex-1 bg-primary hover:bg-primary/90"
+                        >
+                          <Link href={`/campaign/${campaignSlug}`}>Donate</Link>
                         </Button>
-                        <Button asChild variant="outline" className="border-primary/20">
-                          <Link href={`/campaign/${relatedCampaign._id}`}>View Details</Link>
+                        <Button 
+                          asChild 
+                          variant="outline" 
+                          className="border-primary/20 flex-1"
+                        >
+                          <Link href={`/campaign/${campaignSlug}`}>View Details</Link>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          className="border-primary/20 shrink-0"
+                          onClick={(e) => handleShare(campaignSlug, relatedCampaign.title, e)}
+                          title="Share campaign"
+                        >
+                          <Share2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </CardContent>

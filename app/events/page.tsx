@@ -9,6 +9,8 @@ import { upcomingEvents as staticUpcomingEvents } from '@/lib/events-data'
 import { Button } from '@/components/ui/button'
 import EventRegistrationModal from '@/components/EventRegistrationModal'
 import { VolunteerApplication } from '@/components/volunteer-application'
+import { Share2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function Events() {
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
@@ -20,6 +22,36 @@ export default function Events() {
   useEffect(() => {
     fetchEvents()
   }, [])
+
+  const handleShare = async (eventId: string, eventTitle: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const shareUrl = `${window.location.origin}/events/${eventId}`
+    
+    // Try Web Share API first (mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: eventTitle,
+          text: `Check out this event: ${eventTitle}`,
+          url: shareUrl,
+        })
+        toast.success('Shared successfully!')
+        return
+      } catch (err) {
+        // User cancelled or error occurred, fall back to clipboard
+      }
+    }
+    
+    // Fallback to clipboard
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      toast.success('Link copied to clipboard!')
+    } catch (err) {
+      toast.error('Failed to copy link')
+    }
+  }
 
   const fetchEvents = async () => {
     try {
@@ -168,9 +200,19 @@ export default function Events() {
                     <Link
                       href={`/events/${event.id}`}
                       className="flex-1 h-11 flex items-center justify-center border border-primary text-primary rounded-lg font-bold hover:bg-primary/10 transition"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       Details
                     </Link>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-11 w-11 border-primary/20 shrink-0"
+                      onClick={(e) => handleShare(event.id, event.title, e)}
+                      title="Share event"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -225,13 +267,23 @@ export default function Events() {
                       <p className="text-foreground/60 mb-6 text-sm leading-relaxed line-clamp-2">{event.description}</p>
                     </div>
                   </Link>
-                  <div className="p-6 pt-0 mt-auto">
+                  <div className="p-6 pt-0 mt-auto flex gap-3">
                     <Link
                       href={`/events/${event.id}`}
-                      className="block w-full h-11 flex items-center justify-center bg-gray-100 text-foreground/80 rounded-lg font-semibold hover:bg-gray-200 transition"
+                      className="flex-1 h-11 flex items-center justify-center bg-gray-100 text-foreground/80 rounded-lg font-semibold hover:bg-gray-200 transition"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       View Highlights
                     </Link>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-11 w-11 border-gray-300 shrink-0"
+                      onClick={(e) => handleShare(event.id, event.title, e)}
+                      title="Share event"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               ))}

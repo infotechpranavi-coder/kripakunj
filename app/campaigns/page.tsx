@@ -12,6 +12,8 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import Link from 'next/link'
 import { DonationModal } from '@/components/donation-modal'
+import { Share2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 const campaigns = [
   {
@@ -129,6 +131,36 @@ export default function CampaignsPage() {
     return cat.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
+  const handleShare = async (campaignSlug: string, campaignTitle: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const shareUrl = `${window.location.origin}/campaign/${campaignSlug}`
+    
+    // Try Web Share API first (mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: campaignTitle,
+          text: `Check out this campaign: ${campaignTitle}`,
+          url: shareUrl,
+        })
+        toast.success('Shared successfully!')
+        return
+      } catch (err) {
+        // User cancelled or error occurred, fall back to clipboard
+      }
+    }
+    
+    // Fallback to clipboard
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      toast.success('Link copied to clipboard!')
+    } catch (err) {
+      toast.error('Failed to copy link')
+    }
+  }
+
   return (
     <>
       <Navigation />
@@ -201,10 +233,13 @@ export default function CampaignsPage() {
               <div className="col-span-full text-center py-20 text-foreground/50">No campaigns found in this category.</div>
             ) : filteredCampaigns.map((campaign, index) => (
               <AnimatedSection key={campaign._id || campaign.id} direction="up" delay={index * 100}>
-                <Card
-                  className="overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-b from-white to-gray-50 h-full flex flex-col cursor-pointer group"
-                  onClick={() => router.push(`/campaign/${campaign._id || campaign.id}`)}
-                >
+                {(() => {
+                  const campaignSlug = campaign.slug || campaign._id || campaign.id;
+                  return (
+                    <Card
+                      className="overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-b from-white to-gray-50 h-full flex flex-col cursor-pointer group"
+                      onClick={() => router.push(`/campaign/${campaignSlug}`)}
+                    >
                   {campaign.featured && (
                     <div className="absolute top-4 right-4 z-10">
                       <Badge className="bg-primary text-primary-foreground">Featured</Badge>
@@ -249,15 +284,33 @@ export default function CampaignsPage() {
                     </div>
 
                     <div className="flex gap-3">
-                      <Button asChild className="flex-1 bg-primary hover:bg-primary/90">
-                        <Link href={`/campaign/${campaign._id || campaign.id}`}>Donate</Link>
-                      </Button>
-                      <Button asChild variant="outline" className="border-primary/20">
-                        <Link href={`/campaign/${campaign._id || campaign.id}`}>View Details</Link>
-                      </Button>
+                      {(() => {
+                        const campaignSlug = campaign.slug || campaign._id || campaign.id;
+                        return (
+                          <>
+                            <Button asChild className="flex-1 bg-primary hover:bg-primary/90" onClick={(e) => e.stopPropagation()}>
+                              <Link href={`/campaign/${campaignSlug}`}>Donate</Link>
+                            </Button>
+                            <Button asChild variant="outline" className="border-primary/20" onClick={(e) => e.stopPropagation()}>
+                              <Link href={`/campaign/${campaignSlug}`}>View Details</Link>
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="icon"
+                              className="border-primary/20 shrink-0"
+                              onClick={(e) => handleShare(campaignSlug, campaign.title, e)}
+                              title="Share campaign"
+                            >
+                              <Share2 className="h-4 w-4" />
+                            </Button>
+                          </>
+                        );
+                      })()}
                     </div>
                   </CardContent>
                 </Card>
+                  );
+                })()}
               </AnimatedSection>
             ))}
           </div>

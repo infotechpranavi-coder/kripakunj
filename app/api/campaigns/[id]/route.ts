@@ -9,7 +9,12 @@ export async function GET(
     await dbConnect();
     try {
         const { id } = await params;
-        const campaign = await Campaign.findById(id);
+        // Try to find by slug first, then by ID (for backward compatibility)
+        let campaign = await Campaign.findOne({ slug: id });
+        if (!campaign) {
+            // Fallback to ID lookup for existing campaigns
+            campaign = await Campaign.findById(id);
+        }
         if (!campaign) {
             return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
         }
@@ -27,6 +32,15 @@ export async function PUT(
     try {
         const formData = await req.formData();
         const { id } = await params;
+        
+        // Generate slug from title
+        const title = formData.get('title') as string;
+        const slug = title
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
 
         // Process images if any new ones provided
         const imageFiles = formData.getAll('images') as File[];
@@ -60,7 +74,8 @@ export async function PUT(
         }
 
         const updateData = {
-            title: formData.get('title') as string,
+            title: title,
+            slug: slug,
             shortDescription: formData.get('shortDescription') as string,
             aboutCampaign: formData.get('aboutCampaign') as string,
             images: imageUrls,
@@ -85,7 +100,16 @@ export async function PUT(
             impactDescription: formData.get('impactDescription') as string,
         };
 
-        const updatedCampaign = await Campaign.findByIdAndUpdate(id, updateData, { new: true });
+        // Try to find by slug first, then by ID
+        let campaign = await Campaign.findOne({ slug: id });
+        if (!campaign) {
+            campaign = await Campaign.findById(id);
+        }
+        if (!campaign) {
+            return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
+        }
+        
+        const updatedCampaign = await Campaign.findByIdAndUpdate(campaign._id, updateData, { new: true });
 
         if (!updatedCampaign) {
             return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
@@ -105,7 +129,15 @@ export async function DELETE(
     await dbConnect();
     try {
         const { id } = await params;
-        const deletedCampaign = await Campaign.findByIdAndDelete(id);
+        // Try to find by slug first, then by ID
+        let campaign = await Campaign.findOne({ slug: id });
+        if (!campaign) {
+            campaign = await Campaign.findById(id);
+        }
+        if (!campaign) {
+            return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
+        }
+        const deletedCampaign = await Campaign.findByIdAndDelete(campaign._id);
 
         if (!deletedCampaign) {
             return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });

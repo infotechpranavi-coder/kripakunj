@@ -14,6 +14,9 @@ import { CollaboratorsSection } from '@/components/collaborators-section'
 import Image from 'next/image'
 import Link from 'next/link'
 import { VolunteerApplication } from '@/components/volunteer-application'
+import { Share2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 
 export default function Home() {
   const [dbCampaigns, setDbCampaigns] = useState<any[]>([])
@@ -80,6 +83,36 @@ export default function Home() {
 
     loadData()
   }, [])
+
+  const handleShareEvent = async (eventId: string, eventTitle: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const shareUrl = `${window.location.origin}/events/${eventId}`
+    
+    // Try Web Share API first (mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: eventTitle,
+          text: `Check out this event: ${eventTitle}`,
+          url: shareUrl,
+        })
+        toast.success('Shared successfully!')
+        return
+      } catch (err) {
+        // User cancelled or error occurred, fall back to clipboard
+      }
+    }
+    
+    // Fallback to clipboard
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      toast.success('Link copied to clipboard!')
+    } catch (err) {
+      toast.error('Failed to copy link')
+    }
+  }
 
   const heroSlides = dbBanners.length > 0
     ? dbBanners.flatMap(b => {
@@ -152,6 +185,7 @@ export default function Home() {
   // Map DB campaigns to Slider format
   const mappedCampaigns = dbCampaigns.map(c => ({
     id: c._id,
+    slug: c.slug,
     title: c.title,
     image: c.images?.[0] || '/placeholder-campaign.jpg',
     progress: Math.min(100, Math.round(((c.raisedAmount || 0) / (c.goalAmount || 1)) * 100)),
@@ -316,8 +350,8 @@ export default function Home() {
                 delay={index * 100}
                 className="h-full"
               >
-                <Link href={`/events/${event._id || event.id}`} className="block h-full group">
-                  <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-in-out transform hover:-translate-y-2 overflow-hidden border border-gray-100 h-full flex flex-col">
+                <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-in-out transform hover:-translate-y-2 overflow-hidden border border-gray-100 h-full flex flex-col relative group">
+                  <Link href={`/events/${event._id || event.id}`} className="flex-grow">
                     <div className="relative w-full h-48 md:h-56 overflow-hidden">
                       <Image
                         src={event.image || '/placeholder.svg'}
@@ -335,8 +369,19 @@ export default function Home() {
                         {event.title}
                       </h3>
                     </div>
+                  </Link>
+                  <div className="absolute top-4 right-4 z-10">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 bg-white/90 backdrop-blur-sm border-gray-300 hover:bg-white"
+                      onClick={(e) => handleShareEvent(event._id || event.id, event.title, e)}
+                      title="Share event"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                </Link>
+                </div>
               </AnimatedSection>
             ))}
           </div>

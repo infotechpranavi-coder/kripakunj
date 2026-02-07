@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { DonationModal } from '@/components/donation-modal'
+import { Share2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 
 interface Campaign {
   id: string
@@ -39,6 +42,36 @@ export function CampaignsSlider({
   const handleDonate = (campaign: Campaign) => {
     setSelectedCampaign(campaign)
     setIsModalOpen(true)
+  }
+
+  const handleShare = async (campaignSlug: string, campaignTitle: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const shareUrl = `${window.location.origin}/campaign/${campaignSlug}`
+    
+    // Try Web Share API first (mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: campaignTitle,
+          text: `Check out this campaign: ${campaignTitle}`,
+          url: shareUrl,
+        })
+        toast.success('Shared successfully!')
+        return
+      } catch (err) {
+        // User cancelled or error occurred, fall back to clipboard
+      }
+    }
+    
+    // Fallback to clipboard
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      toast.success('Link copied to clipboard!')
+    } catch (err) {
+      toast.error('Failed to copy link')
+    }
   }
 
   // Auto-play functionality with infinite loop
@@ -141,7 +174,7 @@ export function CampaignsSlider({
                 >
                   {/* Card Content */}
                   <div className="relative h-full flex flex-col">
-                    <Link href={`/campaign/${campaign.id}`} className="flex-1 flex flex-col group/card transition-all duration-300">
+                    <Link href={`/campaign/${campaign.slug || campaign.id}`} className="flex-1 flex flex-col group/card transition-all duration-300">
                       {/* Orange Ribbon Badge - Top Left Corner */}
                       <div className="absolute -top-2 -left-2 z-20 bg-orange-500 text-white rounded-br-lg shadow-lg">
                         <div className="px-3 py-2 flex items-center gap-1">
@@ -206,14 +239,23 @@ export function CampaignsSlider({
                       </div>
                     </Link>
 
-                    {/* Donate Button - Orange */}
-                    <div className="px-4 pb-4 bg-white">
+                    {/* Donate Button and Share */}
+                    <div className="px-4 pb-4 bg-white flex gap-2">
                       <Link
-                        href={`/campaign/${campaign.id}?donate=true`}
-                        className="group/btn relative block w-full bg-orange-500 text-white text-center py-2 px-3 rounded-lg font-bold text-xs md:text-sm hover:bg-orange-600 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg active:scale-100 z-30"
+                        href={`/campaign/${campaign.slug || campaign.id}?donate=true`}
+                        className="group/btn relative flex-1 block bg-orange-500 text-white text-center py-2 px-3 rounded-lg font-bold text-xs md:text-sm hover:bg-orange-600 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg active:scale-100 z-30"
                       >
                         <span className="relative z-10">DONATE</span>
                       </Link>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-auto w-auto px-3 border-orange-500/30 hover:bg-orange-50 shrink-0"
+                        onClick={(e) => handleShare(campaign.slug || campaign.id, campaign.title, e)}
+                        title="Share campaign"
+                      >
+                        <Share2 className="h-4 w-4 text-orange-600" />
+                      </Button>
                     </div>
                   </div>
                 </div>
