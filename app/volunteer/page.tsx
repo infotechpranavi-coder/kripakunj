@@ -6,14 +6,18 @@ import { ImageSlider } from '@/components/image-slider'
 import { VolunteerApplication } from '@/components/volunteer-application'
 import { SocialMediaFloatingIcons } from '@/components/social-media-floating-icons'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { shareLink } from '@/lib/share-utils'
 
-export default function Volunteer() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+// Component that handles search params
+function SearchParamsHandler({
+  setIsModalOpen
+}: {
+  setIsModalOpen: (open: boolean) => void
+}) {
   const searchParams = useSearchParams()
 
   // Check for volunteer query parameter
@@ -21,7 +25,13 @@ export default function Volunteer() {
     if (searchParams.get('volunteer') === 'true') {
       setIsModalOpen(true)
     }
-  }, [searchParams])
+  }, [searchParams, setIsModalOpen])
+
+  return null
+}
+
+export default function Volunteer() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const volunteerOpportunities = [
     {
       title: 'Education Mentor',
@@ -162,6 +172,9 @@ export default function Volunteer() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <SearchParamsHandler setIsModalOpen={setIsModalOpen} />
+      </Suspense>
       <Navigation />
 
       {/* Hero Section */}
