@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { AnimatedSection } from '@/components/animated-section'
@@ -15,6 +15,26 @@ import Image from 'next/image'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { DonationModal } from '@/components/donation-modal'
 import { toast } from 'sonner'
+
+// Component that handles search params
+function SearchParamsHandler({
+  setIsDonationModalOpen,
+  campaign
+}: {
+  setIsDonationModalOpen: (open: boolean) => void
+  campaign: any
+}) {
+  const searchParams = useSearchParams()
+  const shouldOpenDonate = searchParams.get('donate') === 'true'
+
+  useEffect(() => {
+    if (shouldOpenDonate && campaign) {
+      setIsDonationModalOpen(true)
+    }
+  }, [shouldOpenDonate, campaign, setIsDonationModalOpen])
+
+  return null
+}
 
 // Mock data for campaigns - in a real app this would come from an API
 const campaigns = [
@@ -174,8 +194,6 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
   const [isLoading, setIsLoading] = useState(true)
 
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
-  const searchParams = useSearchParams()
-  const shouldOpenDonate = searchParams.get('donate') === 'true'
 
   useEffect(() => {
     if (!id) return
@@ -206,12 +224,6 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
     }
     fetchData()
   }, [id])
-
-  useEffect(() => {
-    if (shouldOpenDonate && campaign) {
-      setIsDonationModalOpen(true)
-    }
-  }, [shouldOpenDonate, campaign])
 
   const handleShare = async (campaignSlug: string, campaignTitle: string, e: React.MouseEvent) => {
     e.preventDefault()
@@ -280,6 +292,9 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
 
   return (
     <>
+      <Suspense fallback={null}>
+        <SearchParamsHandler setIsDonationModalOpen={setIsDonationModalOpen} campaign={campaign} />
+      </Suspense>
       <Navigation />
 
       {/* Hero Section with Full Width Image */}
