@@ -34,7 +34,31 @@ export function CampaignsSlider({
 }: CampaignsSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlay, setIsAutoPlay] = useState(autoPlay)
-  const maxIndex = campaigns.length - itemsPerView
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Detect mobile screen size
+  useEffect(() => {
+    let previousIsMobile = window.innerWidth < 768
+    
+    const checkMobile = () => {
+      const nowMobile = window.innerWidth < 768 // md breakpoint
+      setIsMobile(nowMobile)
+      
+      // Reset index when switching between mobile and desktop
+      if (previousIsMobile !== nowMobile) {
+        setCurrentIndex(0)
+        previousIsMobile = nowMobile
+      }
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Use mobileItemsPerView on mobile, itemsPerView on larger screens
+  const activeItemsPerView = isMobile ? mobileItemsPerView : itemsPerView
+  const maxIndex = campaigns.length - activeItemsPerView
 
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -75,10 +99,8 @@ export function CampaignsSlider({
   }
 
   // Auto-play functionality with infinite loop
-
-  // Auto-play functionality with infinite loop
   useEffect(() => {
-    if (!isAutoPlay || campaigns.length <= itemsPerView) return
+    if (!isAutoPlay || campaigns.length <= activeItemsPerView) return
 
     const timer = setInterval(() => {
       setCurrentIndex((prev) => {
@@ -90,7 +112,7 @@ export function CampaignsSlider({
     }, interval)
 
     return () => clearInterval(timer)
-  }, [isAutoPlay, campaigns.length, itemsPerView, maxIndex, interval])
+  }, [isAutoPlay, campaigns.length, activeItemsPerView, maxIndex, interval])
 
   const goToPrevious = () => {
     setIsAutoPlay(false)
@@ -117,11 +139,11 @@ export function CampaignsSlider({
     setCurrentIndex(index)
   }
 
-  const totalPages = Math.ceil(campaigns.length / itemsPerView)
-  const currentPage = Math.floor(currentIndex / itemsPerView)
+  const totalPages = Math.ceil(campaigns.length / activeItemsPerView)
+  const currentPage = Math.floor(currentIndex / activeItemsPerView)
 
   return (
-    <div className="relative">
+    <div className="relative w-full overflow-hidden">
       {/* Title */}
       <div className="mb-8 md:mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-foreground relative inline-block">
@@ -145,25 +167,25 @@ export function CampaignsSlider({
 
       {/* Campaigns Container */}
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden w-full"
         onMouseEnter={() => setIsAutoPlay(false)}
         onMouseLeave={() => setIsAutoPlay(autoPlay)}
       >
         <div
           className="flex transition-transform duration-700 ease-in-out"
           style={{
-            transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
+            transform: `translateX(-${currentIndex * (100 / activeItemsPerView)}%)`,
           }}
         >
           {campaigns.map((campaign, index) => {
-            const isVisible = index >= currentIndex && index < currentIndex + itemsPerView
+            const isVisible = index >= currentIndex && index < currentIndex + activeItemsPerView
             const cardIndex = index - currentIndex
 
             return (
               <div
                 key={campaign.id}
-                className="flex-shrink-0 px-3"
-                style={{ width: `${100 / itemsPerView}%` }}
+                className="flex-shrink-0 px-2 sm:px-3"
+                style={{ width: `${100 / activeItemsPerView}%` }}
               >
                 <div
                   className={`group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-full transform hover:-translate-y-3 border border-gray-100 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'
@@ -266,15 +288,15 @@ export function CampaignsSlider({
       </div>
 
       {/* Navigation Arrows - Modern Design */}
-      {campaigns.length > itemsPerView && (
+      {campaigns.length > activeItemsPerView && (
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 bg-white/95 backdrop-blur-sm shadow-xl rounded-full p-3 hover:bg-white hover:scale-110 transition-all duration-300 z-10 border border-gray-100 group"
+            className="absolute top-1/2 -translate-y-1/2 left-2 md:-translate-x-6 md:left-0 bg-white/95 backdrop-blur-sm shadow-xl rounded-full p-2 md:p-3 hover:bg-white hover:scale-110 transition-all duration-300 z-10 border border-gray-100 group"
             aria-label="Previous campaigns"
           >
             <svg
-              className="w-5 h-5 text-gray-700 group-hover:text-orange-500 transition-colors"
+              className="w-4 h-4 md:w-5 md:h-5 text-gray-700 group-hover:text-orange-500 transition-colors"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -289,11 +311,11 @@ export function CampaignsSlider({
           </button>
           <button
             onClick={goToNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 bg-white/95 backdrop-blur-sm shadow-xl rounded-full p-3 hover:bg-white hover:scale-110 transition-all duration-300 z-10 border border-gray-100 group"
+            className="absolute top-1/2 -translate-y-1/2 right-2 md:translate-x-6 md:right-0 bg-white/95 backdrop-blur-sm shadow-xl rounded-full p-2 md:p-3 hover:bg-white hover:scale-110 transition-all duration-300 z-10 border border-gray-100 group"
             aria-label="Next campaigns"
           >
             <svg
-              className="w-5 h-5 text-gray-700 group-hover:text-orange-500 transition-colors"
+              className="w-4 h-4 md:w-5 md:h-5 text-gray-700 group-hover:text-orange-500 transition-colors"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -317,7 +339,7 @@ export function CampaignsSlider({
           return (
             <button
               key={index}
-              onClick={() => goToSlide(index * itemsPerView)}
+              onClick={() => goToSlide(index * activeItemsPerView)}
               className={`transition-all duration-300 rounded-full ${isActive
                 ? 'bg-gradient-to-r from-orange-500 to-red-500 w-8 h-2.5 shadow-lg'
                 : 'bg-gray-300 w-2.5 h-2.5 hover:bg-gray-400 hover:w-6'

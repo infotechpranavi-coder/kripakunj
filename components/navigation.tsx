@@ -36,17 +36,17 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo and Name */}
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition">
             <Image
               src="/logo.jpg"
               alt="Kripa Kunj Charitable Trust"
               width={70}
               height={70}
-              className="rounded-full"
+              className="rounded-full w-12 h-12 sm:w-[70px] sm:h-[70px]"
             />
-            <div className="hidden sm:block">
-              <div className="font-bold text-primary text-lg">Kripa Kunj Charitable Trust</div>
-              <div className="text-xs text-accent">Serving Beyond Humanity</div>
+            <div className="block">
+              <div className="font-bold text-primary text-sm sm:text-lg">Kripa Kunj Charitable Trust</div>
+              <div className="text-[10px] sm:text-xs text-accent">Serving Beyond Humanity</div>
             </div>
           </Link>
 
