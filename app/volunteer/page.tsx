@@ -178,7 +178,7 @@ export default function Volunteer() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-accent/10 to-white py-16 md:py-24">
+      <section className="bg-linear-to-b from-accent/10 to-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
@@ -373,23 +373,7 @@ export default function Volunteer() {
             >
               Apply Now
             </button>
-            <button
-              onClick={async (e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                const shareUrl = `${window.location.origin}/volunteer?volunteer=true`
-                try {
-                  await shareLink(shareUrl, 'Volunteer With Us', 'Join us as a volunteer and make a difference!')
-                  toast.success('Link copied to clipboard!')
-                } catch (error) {
-                  toast.error('Failed to share link')
-                }
-              }}
-              className="p-3 bg-secondary/20 hover:bg-secondary/30 rounded-lg transition-all duration-300 cursor-pointer"
-              title="Share volunteer link"
-            >
-              <Share2 className="w-5 h-5 text-secondary" />
-            </button>
+            
           </div>
         </div>
       </section>

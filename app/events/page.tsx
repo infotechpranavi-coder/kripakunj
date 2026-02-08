@@ -148,14 +148,14 @@ export default function Events() {
                   key={event.id}
                   className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col cursor-pointer"
                 >
-                  <Link href={`/events/${event.id}`} className="flex-grow">
+                  <Link href={`/events/${event.id}`} className="grow">
                     <div className="relative h-48 overflow-hidden">
                       <img
                         src={event.image}
                         alt={event.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
-                      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary"></div>
+                      <div className="absolute top-0 left-0 right-0 h-2 bg-linear-to-r from-primary to-secondary"></div>
                       <div className="absolute top-4 right-4">
                         <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary rounded-full text-xs font-semibold whitespace-nowrap">
                           {event.category}
@@ -166,19 +166,19 @@ export default function Events() {
                       <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-4">{event.title}</h3>
                       <div className="space-y-3 mb-4 text-foreground/70">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                             <span className="text-primary text-sm">📅</span>
                           </div>
                           <span className="text-sm">{event.date}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                             <span className="text-primary text-sm">🕐</span>
                           </div>
                           <span className="text-sm">{event.time}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                             <span className="text-primary text-sm">📍</span>
                           </div>
                           <span className="text-sm">{event.location}</span>
@@ -192,7 +192,7 @@ export default function Events() {
                       <EventRegistrationModal
                         event={{ id: event.id, title: event.title }}
                         trigger={
-                          <Button className="w-full h-11 bg-gradient-to-r from-primary to-secondary text-primary-foreground font-bold">
+                          <Button className="w-full h-11 bg-linear-to-r from-primary to-secondary text-primary-foreground font-bold">
                             Register Now
                           </Button>
                         }
@@ -240,8 +240,8 @@ export default function Events() {
                   key={event.id}
                   className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 flex flex-col opacity-90 hover:opacity-100"
                 >
-                  <Link href={`/events/${event.id}`} className="flex-grow">
-                    <div className="relative h-48 overflow-hidden filter grayscale-[30%] group-hover:grayscale-0 transition-all duration-500">
+                  <Link href={`/events/${event.id}`} className="grow">
+                    <div className="relative h-48 overflow-hidden filter grayscale-30 group-hover:grayscale-0 transition-all duration-500">
                       <img
                         src={event.image}
                         alt={event.title}
@@ -316,23 +316,7 @@ export default function Events() {
             >
               Join as Volunteer
             </button>
-            <button
-              onClick={async (e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                const shareUrl = `${window.location.origin}/events?volunteer=true`
-                try {
-                  await shareLink(shareUrl, 'Volunteer With Us', 'Join us as a volunteer and make a difference!')
-                  toast.success('Link copied to clipboard!')
-                } catch (error) {
-                  toast.error('Failed to share link')
-                }
-              }}
-              className="p-3 bg-secondary/20 hover:bg-secondary/30 rounded-lg transition-all duration-300 cursor-pointer"
-              title="Share volunteer link"
-            >
-              <Share2 className="w-5 h-5 text-secondary" />
-            </button>
+            
           </div>
         </div>
       </section>
