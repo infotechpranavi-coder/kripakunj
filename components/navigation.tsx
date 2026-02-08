@@ -10,10 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown, Share2 } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { DonationModal } from '@/components/donation-modal'
-import { toast } from 'sonner'
-import { shareLink } from '@/lib/share-utils'
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -98,31 +96,12 @@ export function Navigation() {
             >
               Contact
             </Link>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition cursor-pointer"
-              >
-                Donate
-              </button>
-              <button
-                onClick={async (e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  const shareUrl = `${window.location.origin}/?donate=true`
-                  try {
-                    await shareLink(shareUrl, 'Donate Now', 'Support our cause by making a donation!')
-                    toast.success('Link copied to clipboard!')
-                  } catch (error) {
-                    toast.error('Failed to share link')
-                  }
-                }}
-                className="p-2 bg-primary/20 hover:bg-primary/30 rounded-lg transition-all duration-300 cursor-pointer"
-                title="Share donate link"
-              >
-                <Share2 className="w-4 h-4 text-primary" />
-              </button>
-            </div>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition cursor-pointer"
+            >
+              Donate
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -207,35 +186,15 @@ export function Navigation() {
             >
               Contact
             </Link>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setIsOpen(false)
-                  setIsModalOpen(true)
-                }}
-                className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded font-medium hover:opacity-90 text-center cursor-pointer"
-              >
-                Donate
-              </button>
-              <button
-                onClick={async (e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  setIsOpen(false)
-                  const shareUrl = `${window.location.origin}/?donate=true`
-                  try {
-                    await shareLink(shareUrl, 'Donate Now', 'Support our cause by making a donation!')
-                    toast.success('Link copied to clipboard!')
-                  } catch (error) {
-                    toast.error('Failed to share link')
-                  }
-                }}
-                className="p-2 bg-primary/20 hover:bg-primary/30 rounded transition-all duration-300 cursor-pointer"
-                title="Share donate link"
-              >
-                <Share2 className="w-4 h-4 text-primary" />
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                setIsOpen(false)
+                setIsModalOpen(true)
+              }}
+              className="w-full px-4 py-2 bg-primary text-primary-foreground rounded font-medium hover:opacity-90 text-center cursor-pointer"
+            >
+              Donate
+            </button>
           </div>
         )}
       </div>

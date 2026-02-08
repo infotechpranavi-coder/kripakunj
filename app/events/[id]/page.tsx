@@ -12,6 +12,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { upcomingEvents } from '@/lib/events-data'
 import EventRegistrationModal from '@/components/EventRegistrationModal'
+import { toast } from 'sonner'
+import { shareLink } from '@/lib/share-utils'
 
 export default function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const unwrappedParams = React.use(params)
@@ -249,7 +251,22 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
                                     <h3 className="font-bold mb-4 text-foreground">Share this Event</h3>
                                     <div className="flex gap-4">
-                                        <Button variant="outline" size="icon" className="rounded-full hover:bg-primary hover:text-white transition-colors border-primary/20">
+                                        <Button 
+                                            variant="outline" 
+                                            size="icon" 
+                                            className="rounded-full hover:bg-primary hover:text-white transition-colors border-primary/20"
+                                            onClick={async (e) => {
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                const shareUrl = `${window.location.origin}/events/${event.id || unwrappedParams.id}`
+                                                try {
+                                                    await shareLink(shareUrl, event.title, `Check out this event: ${event.title}`)
+                                                    toast.success('Link copied to clipboard!')
+                                                } catch (error) {
+                                                    toast.error('Failed to share link')
+                                                }
+                                            }}
+                                        >
                                             <Share2 className="w-4 h-4" />
                                         </Button>
                                         <Button variant="outline" size="icon" className="rounded-full hover:bg-primary hover:text-white transition-colors border-primary/20">

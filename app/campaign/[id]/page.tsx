@@ -15,6 +15,7 @@ import Image from 'next/image'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { DonationModal } from '@/components/donation-modal'
 import { toast } from 'sonner'
+import { shareLink } from '@/lib/share-utils'
 
 // Component that handles search params
 function SearchParamsHandler({
@@ -611,29 +612,9 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 <p className="text-foreground/70 mb-6">
                   Your financial contribution can make a significant impact in advancing this cause.
                 </p>
-                <div className="flex items-center gap-2">
-                  <Button onClick={() => setIsDonationModalOpen(true)} className="flex-1 bg-primary hover:bg-primary/90">
-                    Make a Donation
-                  </Button>
-                  <button
-                    onClick={async (e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      const campaignSlug = campaign?.slug || id;
-                      const shareUrl = `${window.location.origin}/campaign/${campaignSlug}?donate=true`
-                      try {
-                        await shareLink(shareUrl, `Donate to ${campaign?.title || 'Campaign'}`, `Support ${campaign?.title || 'this campaign'} by making a donation!`)
-                        toast.success('Link copied to clipboard!')
-                      } catch (error) {
-                        toast.error('Failed to share link')
-                      }
-                    }}
-                    className="p-3 bg-primary/20 hover:bg-primary/30 rounded-lg transition-all duration-300 cursor-pointer"
-                    title="Share donate link"
-                  >
-                    <Share2 className="w-4 h-4 text-primary" />
-                  </button>
-                </div>
+                <Button onClick={() => setIsDonationModalOpen(true)} className="w-full bg-primary hover:bg-primary/90">
+                  Make a Donation
+                </Button>
               </Card>
             </AnimatedSection>
 
@@ -646,28 +627,9 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 <p className="text-foreground/70 mb-6">
                   Join our team and contribute your time and skills to make a difference.
                 </p>
-                <div className="flex items-center gap-2">
-                  <Button asChild variant="outline" className="flex-1 border-primary/20">
-                    <Link href="/volunteer">Join as Volunteer</Link>
-                  </Button>
-                  <button
-                    onClick={async (e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      const shareUrl = `${window.location.origin}/volunteer?volunteer=true`
-                      try {
-                        await shareLink(shareUrl, 'Volunteer With Us', 'Join us as a volunteer and make a difference!')
-                        toast.success('Link copied to clipboard!')
-                      } catch (error) {
-                        toast.error('Failed to share link')
-                      }
-                    }}
-                    className="p-3 border border-primary/20 hover:bg-primary/5 rounded-lg transition-all duration-300 cursor-pointer"
-                    title="Share volunteer link"
-                  >
-                    <Share2 className="w-4 h-4 text-primary" />
-                  </button>
-                </div>
+                <Button asChild variant="outline" className="w-full border-primary/20">
+                  <Link href="/volunteer">Join as Volunteer</Link>
+                </Button>
               </Card>
             </AnimatedSection>
 

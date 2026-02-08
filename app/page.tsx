@@ -352,7 +352,7 @@ export default function Home() {
                 className="h-full"
               >
                 <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-in-out transform hover:-translate-y-2 overflow-hidden border border-gray-100 h-full flex flex-col relative group">
-                  <Link href={`/events/${event._id || event.id}`} className="flex-grow">
+                  <Link href={`/events/${event._id || event.id}`} className="grow">
                     <div className="relative w-full h-48 md:h-56 overflow-hidden">
                       <Image
                         src={event.image || '/placeholder.svg'}
@@ -607,23 +607,7 @@ export default function Home() {
                   </span>
                   <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 </button>
-                <button
-                  onClick={async (e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    const shareUrl = `${window.location.origin}/?volunteer=true`
-                    try {
-                      await shareLink(shareUrl, 'Volunteer With Us', 'Join us as a volunteer and make a difference!')
-                      toast.success('Link copied to clipboard!')
-                    } catch (error) {
-                      toast.error('Failed to share link')
-                    }
-                  }}
-                  className="p-3 bg-secondary/20 hover:bg-secondary/30 rounded-xl transition-all duration-300 cursor-pointer"
-                  title="Share volunteer link"
-                >
-                  <Share2 className="w-5 h-5 text-secondary" />
-                </button>
+                
               </div>
             </div>
           </AnimatedSection>
