@@ -120,15 +120,59 @@ export default function CampaignsPage() {
     fetchCampaigns()
   }, [])
 
+  // Fixed list of categories as requested
+  const fixedCategories = [
+    'All',
+    'Education',
+    'Health & Hygiene',
+    'Environment',
+    'Women Empowerment',
+    'Food Security',
+    'Social Welfare',
+    'Animal Welfare',
+    'Disaster Relief',
+    'Technology',
+    'Celebration',
+    'Others'
+  ]
+
+  // Create category mapping for filter values and display names
+  const categoryMap: { [key: string]: string } = {
+    'all': 'All',
+    'education': 'Education',
+    'health-hygiene': 'Health & Hygiene',
+    'environment': 'Environment',
+    'women-empowerment': 'Women Empowerment',
+    'food-security': 'Food Security',
+    'social-welfare': 'Social Welfare',
+    'animal-welfare': 'Animal Welfare',
+    'disaster-relief': 'Disaster Relief',
+    'technology': 'Technology',
+    'celebration': 'Celebration',
+    'others': 'Others'
+  }
+
+  // Create filter keys (lowercase, spaces replaced with hyphens, & removed)
+  const categories = Object.keys(categoryMap)
+
   const filteredCampaigns = activeFilter === 'all'
     ? dbCampaigns
-    : dbCampaigns.filter(campaign => campaign.category?.toLowerCase() === activeFilter)
-
-  const categories = ['all', ...Array.from(new Set(dbCampaigns.map(campaign => campaign.category?.toLowerCase()).filter(Boolean)))]
+    : dbCampaigns.filter(campaign => {
+        const campaignCategory = campaign.category?.toLowerCase().trim().replace(/\s+/g, '-').replace(/&/g, '')
+        const filterKey = activeFilter.toLowerCase()
+        
+        // Match categories (normalize both for comparison)
+        const normalizedCampaign = campaignCategory?.replace(/[^a-z0-9-]/g, '')
+        const normalizedFilter = filterKey.replace(/[^a-z0-9-]/g, '')
+        
+        return normalizedCampaign === normalizedFilter || 
+               campaignCategory === filterKey ||
+               campaignCategory?.includes(filterKey) ||
+               filterKey.includes(campaignCategory || '')
+      })
 
   const formatCategory = (cat: string) => {
-    if (cat === 'all') return 'All';
-    return cat.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return categoryMap[cat] || cat.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
   const handleShare = async (campaignSlug: string, campaignTitle: string, e: React.MouseEvent) => {

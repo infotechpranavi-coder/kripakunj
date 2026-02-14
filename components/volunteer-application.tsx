@@ -115,12 +115,17 @@ export function VolunteerApplication({ isOpen, onOpenChange }: VolunteerApplicat
                       <SelectValue placeholder="Select Area" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="event-coordination">Event Coordination</SelectItem>
                       <SelectItem value="education">Education</SelectItem>
-                      <SelectItem value="health">Health & Hygiene</SelectItem>
+                      <SelectItem value="health-hygiene">Health & Hygiene</SelectItem>
                       <SelectItem value="environment">Environment</SelectItem>
-                      <SelectItem value="empowerment">Women Empowerment</SelectItem>
-                      <SelectItem value="food">Food Security</SelectItem>
-                      <SelectItem value="events">Event Coordination</SelectItem>
+                      <SelectItem value="women-empowerment">Women Empowerment</SelectItem>
+                      <SelectItem value="food-security">Food Security</SelectItem>
+                      <SelectItem value="social-welfare">Social Welfare</SelectItem>
+                      <SelectItem value="animal-welfare">Animal Welfare</SelectItem>
+                      <SelectItem value="disaster-relief">Disaster Relief</SelectItem>
+                      <SelectItem value="technology">Technology</SelectItem>
+                      <SelectItem value="others">Others</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

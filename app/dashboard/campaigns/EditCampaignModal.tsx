@@ -360,9 +360,27 @@ export default function EditCampaignModal({ campaign, onUpdate }: EditCampaignMo
                             <section className="space-y-4">
                                 <h3 className="text-lg font-semibold flex items-center gap-2">
                                     <span className="bg-primary/10 text-primary w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
-                                    Organizer & Details
+                                    Campaign Details
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="locationCity">City</Label>
+                                        <Input
+                                            id="locationCity"
+                                            placeholder="Mumbai"
+                                            value={formData.campaignDetails.location.city}
+                                            onChange={(e) => handleNestedChange('campaignDetails', 'location', 'city', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="locationState">State</Label>
+                                        <Input
+                                            id="locationState"
+                                            placeholder="Maharashtra"
+                                            value={formData.campaignDetails.location.state}
+                                            onChange={(e) => handleNestedChange('campaignDetails', 'location', 'state', e.target.value)}
+                                        />
+                                    </div>
                                     <div className="space-y-2">
                                         <Label>Organizer Name</Label>
                                         <Input
@@ -382,6 +400,15 @@ export default function EditCampaignModal({ campaign, onUpdate }: EditCampaignMo
                                                 <SelectItem value="organization">Organization</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                    </div>
+                                    <div className="space-y-2 md:col-span-2">
+                                        <Label>Organizer Description</Label>
+                                        <Textarea
+                                            placeholder="Describe the organizer..."
+                                            value={formData.campaignDetails.organizer.description}
+                                            onChange={(e) => handleNestedChange('campaignDetails', 'organizer', 'description', e.target.value)}
+                                            className="min-h-[80px]"
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <div className="flex items-center justify-between">
@@ -455,6 +482,63 @@ export default function EditCampaignModal({ campaign, onUpdate }: EditCampaignMo
                                                 <SelectItem value="upcoming">Upcoming</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                    </div>
+                                    <div className="space-y-2 md:col-span-2">
+                                        <div className="flex items-center space-x-2">
+                                            <input
+                                                type="checkbox"
+                                                id="isOnline"
+                                                checked={formData.campaignDetails.location.isOnline}
+                                                onChange={(e) => handleNestedChange('campaignDetails', 'location', 'isOnline', e.target.checked)}
+                                                className="h-4 w-4 rounded border-gray-300"
+                                            />
+                                            <Label htmlFor="isOnline" className="cursor-pointer">This is an online campaign</Label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section className="space-y-4">
+                                <h3 className="text-lg font-semibold flex items-center gap-2">
+                                    <span className="bg-primary/10 text-primary w-6 h-6 rounded-full flex items-center justify-center text-sm">4</span>
+                                    Expected Impact
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="beneficiariesCount">Expected Beneficiaries Count</Label>
+                                        <Input
+                                            id="beneficiariesCount"
+                                            type="number"
+                                            placeholder="1000"
+                                            value={formData.expectedImpact.beneficiaries.count}
+                                            onChange={(e) => handleNestedChange('expectedImpact', 'beneficiaries', 'count', Number(e.target.value))}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Start Date</Label>
+                                        <Input
+                                            type="date"
+                                            value={formData.expectedImpact.duration.startDate}
+                                            onChange={(e) => handleNestedChange('expectedImpact', 'duration', 'startDate', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>End Date</Label>
+                                        <Input
+                                            type="date"
+                                            value={formData.expectedImpact.duration.endDate}
+                                            onChange={(e) => handleNestedChange('expectedImpact', 'duration', 'endDate', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2 md:col-span-2">
+                                        <Label htmlFor="impactDescription">Impact Description</Label>
+                                        <Textarea
+                                            id="impactDescription"
+                                            placeholder="Explain the positive change this campaign will create..."
+                                            value={formData.expectedImpact.impactDescription}
+                                            onChange={(e) => handleSectionChange('expectedImpact', 'impactDescription', e.target.value)}
+                                            className="min-h-[120px]"
+                                        />
                                     </div>
                                 </div>
                             </section>

@@ -64,7 +64,7 @@ if (mongoose.models.Campaign) {
 }
 
 // Generate slug from title before saving
-CampaignSchema.pre('save', async function(next) {
+CampaignSchema.pre('save', async function() {
     if (this.isModified('title') || this.isNew) {
         // Generate slug from title
         let baseSlug = this.title
@@ -84,12 +84,11 @@ CampaignSchema.pre('save', async function(next) {
         }
         this.slug = slug;
     }
-    next();
 });
 
-CampaignSchema.pre('findOneAndUpdate', async function(next) {
+CampaignSchema.pre('findOneAndUpdate', async function() {
     const update = this.getUpdate() as any;
-    if (update.title) {
+    if (update && update.title) {
         let baseSlug = update.title
             .toLowerCase()
             .trim()
@@ -101,13 +100,13 @@ CampaignSchema.pre('findOneAndUpdate', async function(next) {
         let slug = baseSlug;
         let counter = 1;
         const query = this.getQuery();
-        while (await Campaign.findOne({ slug, _id: { $ne: query._id } })) {
+        const Model = this.model;
+        while (await Model.findOne({ slug, _id: { $ne: query._id } })) {
             slug = `${baseSlug}-${counter}`;
             counter++;
         }
         update.slug = slug;
     }
-    next();
 });
 
 const Campaign = mongoose.model('Campaign', CampaignSchema);
